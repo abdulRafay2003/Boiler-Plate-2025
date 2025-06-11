@@ -24,22 +24,18 @@ import LogActivityBottomSheet from '@/components/agentBottomSheets/logActivity';
 import ActivityHeaderSkeleton from '@/components/skeletons/activitySkeleton';
 import FilterCalendarBottomSheet from '@/components/calenderBottomSheet';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  setCalendarDate,
-  setScrollSingle,
-  setUserDetail,
-} from '@/redux/actions/UserActions';
 import moment from 'moment';
 import {getAllActivitiesApi} from '@/services/apiMethods/activitiesApi';
 import {AxiosError} from 'axios';
+import { dispatchToStore, RootState } from '@/redux/store';
+import { setCalendarDate, setScrollSingle, setUserDetail } from '@/redux/slice/UserSlice/userSlice';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const ActivityDetails = props => {
   const focused = useIsFocused();
   const swipeFlatlist = useRef(null);
-  const findScrollIndex = useSelector(state => state?.user?.singleScroll);
-  const dispatch = useDispatch();
+  const findScrollIndex = useSelector((state: RootState) => state?.user?.singleScroll);
   const [headerLoading, setHeaderLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -162,7 +158,7 @@ const ActivityDetails = props => {
   const [activityCrash, setActivityCrash] = useState(
     'No activities at the moment.',
   );
-  const dates = useSelector(state => state?.user?.calendarDate);
+  const dates = useSelector((state: RootState) => state?.user?.calendarDate);
   const [startDate, setStartDate] = useState(new Date());
   const [skeletonLoading, setSkeletonLoading] = useState(true);
   const [edDate, setEndDate] = useState(new Date());
@@ -257,7 +253,7 @@ const ActivityDetails = props => {
     setselectedMonthEndDate(currentMonthIndexEndDate);
     getAllDaysInMonthEndDate(currentMonthIndexEndDate, currentYearIndexEndDate);
     setSelectedDayEndDate(currentDay - 1);
-    dispatch(
+    dispatchToStore(
       setCalendarDate({
         startDay: currentDay - 1,
         startMonth: currentMonthIndex,
@@ -739,7 +735,7 @@ const ActivityDetails = props => {
           ' to ' +
           moment(endDateStr).format('DD-MM-YYYY'),
       );
-      dispatch(
+      dispatchToStore(
         setCalendarDate({
           startDay: new Date(startDate).getDate() - 1,
           startMonth: new Date(startDate).getMonth(),
@@ -787,7 +783,7 @@ const ActivityDetails = props => {
     setselectedMonthEndDate(currentMonthIndexEndDate);
     getAllDaysInMonthEndDate(currentMonthIndexEndDate, currentYearIndexEndDate);
     setSelectedDayEndDate(currentDay - 1);
-    dispatch(
+    dispatchToStore(
       setCalendarDate({
         startDay: currentDay - 1,
         startMonth: currentMonthIndex,
@@ -876,7 +872,7 @@ const ActivityDetails = props => {
       setPage(1);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -910,7 +906,7 @@ const ActivityDetails = props => {
                       animated: true,
                     });
                   }, 1000);
-                  dispatch(setScrollSingle(true));
+                  dispatchToStore(setScrollSingle(true));
                 }
               }}
               bounces={false}

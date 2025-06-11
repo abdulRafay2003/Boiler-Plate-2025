@@ -32,7 +32,7 @@ import {
   updateProfilePicApi,
 } from '@/services/apiMethods/authApis';
 import {uploadImageApi} from '@/services/apiMethods/uploadImage';
-import {setLoader, setUserDetail} from '@/redux/actions/UserActions';
+import {setLoader, setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 import {ThankYouPopup} from '@/components/modal/thankyouPopUp';
 import LoaderNew from '@/components/loaderNew';
 import ReactNativeBlobUtil from 'react-native-blob-util';
@@ -45,12 +45,12 @@ import * as Progress from 'react-native-progress';
 import {ImageViewerPopup} from '@/components/modal/imageViewer';
 import {ImageViewerEditProfile} from '@/components/modal/imageViewerEditProfile';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
+import { RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const UserProfile = props => {
-  const isLoadingRedux = useSelector(state => state?.user?.loading);
+  const isLoadingRedux = useSelector((state: RootState) => state?.user?.loading);
   const focused = useIsFocused();
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [loadingMark, setLoadingMark] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
@@ -58,7 +58,7 @@ const UserProfile = props => {
   const [userData, setUserData] = useState({});
   const [showSelectAttachment, setShowSelectAttachment] = useState(false);
   const [updated, setUpdated] = useState(false);
-  const userDatails = useSelector(state => state?.user?.userDetail);
+  const userDatails = useSelector((state: RootState) => state?.user?.userDetail);
   const [progress, setProgress] = useState(100);
   const [selectedImage, setSelectedImage] = useState('');
   const [showViewer, setShowViewer] = useState(false);
@@ -66,7 +66,7 @@ const UserProfile = props => {
   const [thanksText, setThanksText] = useState('');
   const [apiResponnseErrors, setApiResponseMessageView] = useState('');
   useEffect(() => {
-    dispatch(setLoader(false));
+    dispatchToStore(setLoader(false));
     StatusBar.setBarStyle('light-content');
     if (Platform.OS == 'android') {
       StatusBar.setBackgroundColor('transparent');
@@ -319,7 +319,7 @@ const UserProfile = props => {
   const handleUpdate = async () => {
     try {
       setProgress(0);
-      dispatch(setLoader(true));
+      dispatchToStore(setLoader(true));
       let body = new FormData();
       body.append('file', {
         uri: selectedProfile?.path,
@@ -346,10 +346,10 @@ const UserProfile = props => {
         updateProfile(upload?.data?.data?.name);
       }
     } catch (error) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const err = error as AxiosError;
       if (err?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       setApiResponseMessageView(error?.toString());
@@ -364,16 +364,16 @@ const UserProfile = props => {
       if (update) {
         setThanksText(`Profile picture updated.`);
         setLoading(false);
-        dispatch(setLoader(false));
+        dispatchToStore(setLoader(false));
         setShowThankyou(true);
         setUpdated(false);
         getProfileUrl(update);
       }
     } catch (err) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       console.log('error,', error);
@@ -391,7 +391,7 @@ const UserProfile = props => {
         }).fetch('GET', profileImage);
         const base64Data = await response.base64();
         setSelectedProfile(null);
-        dispatch(
+        dispatchToStore(
           setUserDetail({
             ...userDatails,
             profileImage: base64Data,
@@ -399,10 +399,10 @@ const UserProfile = props => {
         );
       }
     } catch (err) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       console.log('error,', error);
@@ -417,14 +417,14 @@ const UserProfile = props => {
         userProfile?.last_name != userDatails?.user?.last_name ||
         userProfile?.phone != userDatails?.user?.phone
       ) {
-        dispatch(
+        dispatchToStore(
           setUserDetail({
             ...userProfile,
             profileImage: userDatails?.profileImage,
           }),
         );
       } else {
-        dispatch(
+        dispatchToStore(
           setUserDetail({
             ...userDatails,
             profileImage: userDatails?.profileImage,
@@ -438,11 +438,11 @@ const UserProfile = props => {
       console?.log('errorerrorerror', error);
 
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       setLoading(false);
-      dispatch(
+      dispatchToStore(
         setUserDetail({
           ...userDatails,
           profileImage: null,
@@ -458,21 +458,21 @@ const UserProfile = props => {
   };
   const cancelAccountDeletionRequest = async () => {
     try {
-      dispatch(setLoader(true));
+      dispatchToStore(setLoader(true));
       const cancelRequest = await cancelAccountDeletionApi();
       if (cancelRequest?.statusCode == 200) {
         setThanksText(cancelRequest?.message);
         setAccountStatus(null);
         setTimeout(() => {
-          dispatch(setLoader(false));
+          dispatchToStore(setLoader(false));
           setShowThankyou(true);
         }, 500);
       } else {
-        dispatch(setLoader(false));
+        dispatchToStore(setLoader(false));
       }
     } catch (error) {
       console.log('cancelRequestcancelRequesterror', error);
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       setShowThankyou(false);
       setThanksText('');
     }

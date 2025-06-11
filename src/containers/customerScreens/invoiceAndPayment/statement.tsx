@@ -21,17 +21,17 @@ import ReactNativeBlobUtil from 'react-native-blob-util';
 import Share from 'react-native-share';
 import {getProfilePicUrlApi} from '@/services/apiMethods/authApis';
 import {useDispatch, useSelector} from 'react-redux';
-import {setUserDetail} from '@/redux/actions/UserActions';
+import {setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 import {AxiosError} from 'axios';
+import { RootState } from '@/redux/store';
 let screenHeight = Math.round(Dimensions.get('window').height);
 let screenWidth = Math.round(Dimensions.get('window').width);
 
 export default function StatementViewer(props) {
   const [loader, setLoader] = useState(true);
-  const dispatch = useDispatch();
   const [url, setUrl] = useState('');
   const [serverError, setServerError] = useState(false);
-  const userDatails = useSelector(state => state?.user?.userDetail);
+  const userDatails = useSelector((state: RootState) => state?.user?.userDetail);
   useEffect(() => {
     StatusBar.setBarStyle('light-content');
     if (Platform.OS == 'android') {

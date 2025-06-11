@@ -3,10 +3,8 @@ import {
   Text,
   Dimensions,
   Image,
-  FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Keyboard,
   Platform,
   ActivityIndicator,
@@ -24,34 +22,31 @@ import {SubmitButton} from '@/components/buttons/submitButton';
 import DatePicker from 'react-native-date-picker';
 // import DatePicker from 'react-native-datepicker';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {DropDownButton} from '@/components/buttons/dropDownButton';
 import {launchImageLibrary} from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
 import {AxiosError} from 'axios';
-import {ThankYouPopup} from '@/components/modal/thankyouPopUp';
 import {AttachmentPopup} from '@/components/modal/attachmentPopup';
 import AssociateLeadBottomSheet from '@/components/agentBottomSheets/associateLead';
-import {TabRouter} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {DropDownButtonYup} from '@/components/buttons/dropDownYup';
 import {SubmittedPopup} from '@/components/modal/submittedPopup';
 import {postNotesApi} from '@/services/apiMethods/createNotes';
 import {allLeadsSearchApi} from '@/services/apiMethods/leadsApis';
 import {Loader} from '@/components/loader';
-import {useDispatch, useSelector} from 'react-redux';
-import {setUserDetail} from '@/redux/actions/UserActions';
+import {useSelector} from 'react-redux';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
+import {dispatchToStore, RootState} from '@/redux/store';
+import {setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
 const NoteLogs = props => {
-  const dispatch = useDispatch();
   const onClickRef = useRef(null);
   const currentDate = new Date();
   const sheetRef = useRef(null);
   const snapPoints = useMemo(() => ['1%', '1%', '70%'], []);
-  const dataFound = useSelector(state => state?.user?.dropdownData);
+  const dataFound = useSelector((state: RootState) => state?.user?.dropdownData);
   const [title, setTitle] = useState('');
   const [time, setTime] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState();
@@ -465,7 +460,7 @@ const NoteLogs = props => {
       setLoadingMark(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -524,7 +519,7 @@ const NoteLogs = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&

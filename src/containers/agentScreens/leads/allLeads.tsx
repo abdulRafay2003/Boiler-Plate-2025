@@ -32,11 +32,7 @@ import DeviceInfo from 'react-native-device-info';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
-import {
-  setNotificationCounts,
-  setUserDetail,
-} from '@/redux/actions/UserActions';
-import {useDispatch} from 'react-redux';
+import { dispatchToStore } from '@/redux/store';
 import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import PushNotification from 'react-native-push-notification';
 import crashlytics from '@react-native-firebase/crashlytics';
@@ -48,13 +44,13 @@ import LogActivityBottomSheet from '@/components/agentBottomSheets/logActivity';
 import AgentAllLeadsSkeleton from '@/components/skeletons/allLeads';
 import {AxiosError} from 'axios';
 import {allLeadsSearchApi} from '@/services/apiMethods/leadsApis';
+import { setUserDetail } from '@/redux/slice/UserSlice/userSlice';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const AllLeads = props => {
   const focused = useIsFocused();
   const leadRef = useRef();
-  const dispatch = useDispatch();
   const [leadStatus, setLeadStatus] = useState('');
   const [propertyStatus, setPropertyStatus] = useState('');
   const [dummyArray, setDummyArray] = useState([]);
@@ -289,7 +285,7 @@ const AllLeads = props => {
       setAllLeadsSkeleton(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&

@@ -21,6 +21,7 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import Share from 'react-native-share';
 import {AxiosError} from 'axios';
 import {useSelector} from 'react-redux';
+import { RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
@@ -29,7 +30,7 @@ const BlogDetail = props => {
   const [loading, setLoading] = useState(true);
   const [blogDetails, setBlogDetails] = useState({});
   const [apiCrash, setApiCrash] = useState(false);
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   useEffect(() => {
     StatusBar.setBarStyle('light-content');
     if (Platform.OS == 'android') {

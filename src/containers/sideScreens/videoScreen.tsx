@@ -15,13 +15,14 @@ import {FONT_FAMILY} from '@/constants/fontFamily';
 import {CircleBackButton} from '@/components/buttons/circleBackButton';
 import {TabsButton} from '@/components/formsTab';
 import {useSelector} from 'react-redux';
+import { RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
 export default function VideoScreen(props) {
   const url = props?.route?.params?.url;
   const projecName = props?.route?.params?.name;
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     StatusBar.setBarStyle('dark-content');

@@ -43,11 +43,9 @@ import EnquiryForm from '@/containers/sideScreens/enquiryForm';
 import Location from '@/containers/sideScreens/location';
 import MoreModal from '@/containers/more/moreModal';
 import {
-  setOnBoardingComplete,
   setRefresh,
   setUserDetail,
-  setWalkThroughImages,
-} from '@/redux/actions/UserActions';
+} from '@/redux/slice/UserSlice/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import ApplyMortage from '@/containers/sideScreens/applyMortage';
 import PrivacyScreen from '@/containers/sideScreens/privacyPolicy';
@@ -86,13 +84,14 @@ import messaging from '@react-native-firebase/messaging';
 import RecieptViewer from '@/containers/customerScreens/invoiceAndPayment/reciept';
 import StatementViewer from '@/containers/customerScreens/invoiceAndPayment/statement';
 import NotificationItem from '@/containers/customerScreens/invoiceAndPayment/notificationItem';
+import { RootState, store } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MainStack = props => {
-  const userData = dataHandlerService.getStore().getState().user.userDetail;
+  const userData = store.getState().user.userDetail;
   const route = () => {
     switch (userData?.role) {
       case undefined:
@@ -236,7 +235,6 @@ const AuthNavigator = ({props}) => {
 const MainTabsGuest = props => {
   const navigation = useNavigation();
   const [show, setShow] = useState(false);
-  const dispatch = useDispatch();
   const renderTabBar = ({routeName, selectedTab, navigate}) => {
     const onNavigate = async () => {
       var guestUser = await AsyncStorage.getItem('isGuest');
@@ -303,7 +301,7 @@ const MainTabsGuest = props => {
                 from: 'Home',
               },
             });
-            dispatch(setUserDetail({role: 'guest'}));
+            dispatchToStore(setUserDetail({role: 'guest'}));
           } else {
             setShow(false);
             props?.navigation?.navigate(item?.parentStack, {
@@ -387,7 +385,7 @@ const MainTabsGuest = props => {
                 style={{justifyContent: 'center', alignItems: 'center'}}
                 onPress={() => {
                   props?.navigation?.navigate('VRTour');
-                  dispatch(setRefresh(true));
+                  dispatchToStore(setRefresh(true));
                 }}>
                 <Image
                   source={require('@/assets/images/icons/VrTour.png')}
@@ -486,9 +484,8 @@ const MainTabsGuest = props => {
 };
 const MainTabsCustomer = props => {
   const navigation = useNavigation();
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const [show, setShow] = useState(false);
-  const dispatch = useDispatch();
   const renderTabBar = ({routeName, selectedTab, navigate}) => {
     const onNavigate = async () => {
       var guestUser = await AsyncStorage.getItem('isGuest');
@@ -526,7 +523,7 @@ const MainTabsCustomer = props => {
     );
   };
   const onPressLogOut = async () => {
-    // dispatch(setLoader(true));
+    // dispatchToStore(setLoader(true));
     try {
       var payLoad = {
         email: userData?.user?.email,
@@ -535,7 +532,7 @@ const MainTabsCustomer = props => {
       if (responseLogOut?.statusCode == 200) {
         setShow(false);
         props?.navigation?.navigate('Login');
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
       }
     } catch (error) {
       const err = error as AxiosError;
@@ -582,7 +579,7 @@ const MainTabsCustomer = props => {
             onPressLogOut();
             // setShow(false);
             // props?.navigation?.navigate('Login');
-            // dispatch(setUserDetail({role: 'guest'}));
+            // dispatchToStore(setUserDetail({role: 'guest'}));
           } else if (item?.title == 'Account') {
             setShow(false);
             props?.navigation?.navigate('DeleteAccount');
@@ -674,7 +671,7 @@ const MainTabsCustomer = props => {
                 style={{justifyContent: 'center', alignItems: 'center'}}
                 onPress={() => {
                   props?.navigation?.navigate('VRTour');
-                  dispatch(setRefresh(true));
+                  dispatchToStore(setRefresh(true));
                 }}>
                 <Image
                   source={require('@/assets/images/icons/VrTour.png')}
@@ -727,7 +724,7 @@ const MainTabsCustomer = props => {
                     routes: [{name: 'CDashboard'}],
                   });
                   // props?.navigation?.navigate('CDashboard');
-                  dispatch(setRefresh(true));
+                  dispatchToStore(setRefresh(true));
                 }}>
                 <Image
                   source={require('@/assets/images/icons/dashbord_bottom.png')}
@@ -827,8 +824,7 @@ const MainTabsCustomer = props => {
 const MainTabsAgent = props => {
   const navigation = useNavigation();
   const [show, setShow] = useState(false);
-  const userData = useSelector(state => state?.user?.userDetail);
-  const dispatch = useDispatch();
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const renderTabBar = ({routeName, selectedTab, navigate}) => {
     const onNavigate = async () => {
       var guestUser = await AsyncStorage.getItem('isGuest');
@@ -874,7 +870,7 @@ const MainTabsAgent = props => {
       if (responseLogOut?.statusCode == 200) {
         setShow(false);
         props?.navigation?.navigate('Login');
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
       }
     } catch (error) {
       const err = error as AxiosError;
@@ -916,7 +912,7 @@ const MainTabsAgent = props => {
             onPressLogOut();
             // setShow(false);
             // props?.navigation?.navigate('Login');
-            // dispatch(setUserDetail({role: 'guest'}));
+            // dispatchToStore(setUserDetail({role: 'guest'}));
           } else if (item?.title == 'Account') {
             setShow(false);
             props?.navigation?.navigate('DeleteAccount');
@@ -1008,7 +1004,7 @@ const MainTabsAgent = props => {
                 style={{justifyContent: 'center', alignItems: 'center'}}
                 onPress={() => {
                   props?.navigation?.navigate('VRTour');
-                  dispatch(setRefresh(true));
+                  dispatchToStore(setRefresh(true));
                 }}>
                 <Image
                   source={require('@/assets/images/icons/VrTour.png')}
@@ -1060,7 +1056,7 @@ const MainTabsAgent = props => {
                     index: 0,
                     routes: [{name: 'ADashboard'}],
                   });
-                  dispatch(setRefresh(true));
+                  dispatchToStore(setRefresh(true));
                 }}>
                 <Image
                   source={require('@/assets/images/icons/dashbord_bottom.png')}

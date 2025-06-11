@@ -28,8 +28,8 @@ import {useIsFocused} from '@react-navigation/native';
 import {
   setNotificationCounts,
   setUserDetail,
-} from '@/redux/actions/UserActions';
-import {useDispatch} from 'react-redux';
+} from '@/redux/slice/UserSlice/userSlice';
+import { dispatchToStore } from '@/redux/store';
 import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import PushNotification from 'react-native-push-notification';
 import crashlytics from '@react-native-firebase/crashlytics';
@@ -45,7 +45,6 @@ let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const CustomerPropertyPortfolio = props => {
   const focused = useIsFocused();
-  const dispatch = useDispatch();
   const [myPropertiesList, setMyPropertiesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMark, setLoadingMark] = useState(false);
@@ -283,7 +282,7 @@ const CustomerPropertyPortfolio = props => {
       setLoading(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&

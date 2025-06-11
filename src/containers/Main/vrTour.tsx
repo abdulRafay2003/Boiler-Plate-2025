@@ -23,9 +23,10 @@ import {
 import Carousel from 'react-native-reanimated-carousel';
 import {useIsFocused} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {setRefresh} from '@/redux/actions/UserActions';
+import {setRefresh} from '@/redux/slice/UserSlice/userSlice';
 import crashlytics from '@react-native-firebase/crashlytics';
 import SingleVRSkeleton from '@/components/skeletons/singleVrSke';
+import { RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
@@ -44,8 +45,7 @@ const VRTour = props => {
   const [imageLoad, setImageLoad] = useState(true);
 
   var count = 0;
-  const tabFocused = useSelector(state => state?.user?.refresh);
-  const dispatch = useDispatch();
+  const tabFocused = useSelector((state: RootState) => state?.user?.refresh);
   useEffect(() => {
     getAllProjectsData();
     setLoading(true);
@@ -69,7 +69,7 @@ const VRTour = props => {
           array.push(item?.id);
         }
       });
-      dispatch(setRefresh(false));
+      dispatchToStore(setRefresh(false));
       setProjectIds(array);
       getSingleProjectVR(array[0]);
     } catch (error) {

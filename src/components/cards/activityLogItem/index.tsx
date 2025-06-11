@@ -17,6 +17,7 @@ import {getProfilePicUrlApi} from '@/services/apiMethods/authApis';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import Share from 'react-native-share';
 import {useSelector} from 'react-redux';
+import {RootState} from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 interface Props {
@@ -30,7 +31,7 @@ const ActivityLogItem = (props: Props) => {
   const [showAttachViewerPopup, setShowAttachViewerPopup] = useState(false);
   const [showLoader, setShowLoader] = useState('');
   const [downloadStart, setDownloadStart] = useState(false);
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   var lines = item?.message?.split(/\r\n|\r|\n/).length;
   const dateShow = item?.createdAt ? item?.createdAt.split('T')[0] : null;
   const downloadBrochure = async name => {

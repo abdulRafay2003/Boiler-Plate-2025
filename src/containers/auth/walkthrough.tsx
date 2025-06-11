@@ -13,19 +13,21 @@ import {
 } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import LinearGradient from 'react-native-linear-gradient';
-import {useDispatch, useSelector} from 'react-redux';
-import {setOnBoardingComplete} from '@/redux/actions/UserActions';
+import {useSelector} from 'react-redux';
 import styles from '@/assets/stylesheet/walkthrough.styles';
 import PushNotification from 'react-native-push-notification';
 import FastImage from 'react-native-fast-image';
 import {FONT_FAMILY} from '@/constants/fontFamily';
+import {dispatchToStore, RootState} from '@/redux/store';
+import {setOnBoardingComplete} from '@/redux/slice/AuthSlice/authSlice';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 
 export default function Walkthrough(props) {
-  const dispatch = useDispatch();
-  const slides = useSelector(state => state?.user?.walkThroughImages);
-  const apiStatus = useSelector(state => state?.user?.skipIntro);
+  const slides = useSelector(
+    (state: RootState) => state?.auth?.walkThroughImages
+  );
+  const apiStatus = useSelector((state: RootState) => state?.user?.skipIntro);
   const [loading, setLoading] = useState(true);
 
   var count = 0;
@@ -39,7 +41,7 @@ export default function Walkthrough(props) {
   }, []);
 
   const onDone = async () => {
-    dispatch(setOnBoardingComplete(true));
+    dispatchToStore(setOnBoardingComplete(true));
     await AsyncStorage?.setItem('viewedOnboarding', '1');
     props.navigation.reset({
       index: 0,

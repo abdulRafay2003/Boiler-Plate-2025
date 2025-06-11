@@ -4,17 +4,17 @@ import MainStack from './app-routes';
 import InitialRoute from './initiate';
 import dataHandlerService from '../../services/mainServices/dataHandler.service';
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import {useDispatch} from 'react-redux';
-import {setSkipIntro, setWalkThroughImages} from '@/redux/actions/UserActions';
+import {setSkipIntro} from '@/redux/slice/UserSlice/userSlice';
 import {GetWalkThrough} from '@/services/apiMethods/walkthrough';
 import theme from '@/assets/stylesheet/theme';
 import {Alert, AppState} from 'react-native';
 import AuthenticatedRoutes from './authenticatedRoutes';
 import {AxiosError} from 'axios';
+import { setWalkThroughImages } from '@/redux/slice/AuthSlice/authSlice';
+import { dispatchToStore, store } from '@/redux/store';
 
 const MainRoute = props => {
-  const dispatch = useDispatch();
-  var status = dataHandlerService.getStore().getState().user.onBordingComplete;
+  var status = store.getState().auth.onBordingComplete;
   useEffect(() => {
     getWalkThroughImages();
   }, []);
@@ -36,12 +36,12 @@ const MainRoute = props => {
         });
       });
 
-      dispatch(setWalkThroughImages(array));
+      dispatchToStore(setWalkThroughImages(array));
     } catch (error) {
       const err = error as AxiosError;
       if (err?.response?.status >= 500 && err?.response?.status <= 599) {
-        dispatch(setSkipIntro(true));
-        dispatch(setWalkThroughImages([]));
+        dispatchToStore(setSkipIntro(true));
+        dispatchToStore(setWalkThroughImages([]));
       }
 
       console.log('error', error);

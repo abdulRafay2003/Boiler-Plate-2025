@@ -1,3 +1,4 @@
+import { RootState } from '@/redux/store';
 import React from 'react';
 import {
   Image,
@@ -44,7 +45,7 @@ export const Headers = (props: Props) => {
     onNotificationPress,
     notificationIcon,
   } = props;
-  const count = useSelector(state => state?.user?.notificationCount);
+  const count = useSelector((state: RootState) => state?.user?.notificationCount);
 
   return (
     <ImageBackground

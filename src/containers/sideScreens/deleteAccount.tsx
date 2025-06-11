@@ -8,7 +8,7 @@ import {DeleteAccountPopup} from '@/components/modal/deleteAccountPopup';
 import {ReasonValidation} from '@/components/Validations/validations';
 import {yupResolver} from '@hookform/resolvers/yup/src/yup';
 import {useForm} from 'react-hook-form';
-import {setLoader, setUserDetail} from '@/redux/actions/UserActions';
+import {setLoader, setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {Input} from '@/components/TextInput/Input';
 import {DeleteAccountApi} from '@/services/apiMethods/authApis';
@@ -16,14 +16,14 @@ import LoaderNew from '@/components/loaderNew';
 import {ThankYouPopup} from '@/components/modal/thankyouPopUp';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
 import {AxiosError} from 'axios';
+import { RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const DeleteAccount = props => {
-  const dispatch = useDispatch();
 
   const inputRef = useRef(null);
-  const isLoadingRedux = useSelector(state => state?.user?.loading);
+  const isLoadingRedux = useSelector((state: RootState) => state?.user?.loading);
   const [showPopUp, setShowPopUp] = useState(false);
   const [focused, setFocused] = useState(false);
   const [reason, setReason] = useState('');
@@ -48,23 +48,23 @@ const DeleteAccount = props => {
 
       StatusBar.setTranslucent(true);
     }
-    dispatch(setLoader(false));
+    dispatchToStore(setLoader(false));
   }, []);
   const onPressYes = async () => {
     try {
       setShowPopUp(false);
-      dispatch(setLoader(true));
+      dispatchToStore(setLoader(true));
       let payload = {
         reason: reason,
       };
       const deleteAccount = await DeleteAccountApi(payload);
       if (deleteAccount?.statusCode == 200) {
-        dispatch(setLoader(false));
+        dispatchToStore(setLoader(false));
         setShowPopUp(false);
         setShowThankyou(true);
         setThanksText(deleteAccount?.message);
       } else {
-        dispatch(setLoader(false));
+        dispatchToStore(setLoader(false));
         setShowPopUp(true);
       }
     } catch (error) {
@@ -72,7 +72,7 @@ const DeleteAccount = props => {
       if (err?.response?.status >= 500 && err?.response?.status <= 599) {
         setApiResponseMessageView('Unable to delete account at the moment.');
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
     }
   };
   return (
@@ -197,7 +197,7 @@ const DeleteAccount = props => {
               index: 0,
               routes: [{name: 'Login'}],
             });
-            dispatch(setUserDetail({role: 'guest'}));
+            dispatchToStore(setUserDetail({role: 'guest'}));
           } else {
             setShowPopUp(false);
             Keyboard.dismiss();
@@ -215,7 +215,7 @@ const DeleteAccount = props => {
             index: 0,
             routes: [{name: 'Login'}],
           });
-          dispatch(setUserDetail({role: 'guest'}));
+          dispatchToStore(setUserDetail({role: 'guest'}));
         }}
         focused={focused}
         textInputFocused={() => {

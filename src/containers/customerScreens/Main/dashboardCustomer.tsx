@@ -40,7 +40,7 @@ import {
   setPaymentConfigs,
   setPortfolioMatch,
   setUserDetail,
-} from '@/redux/actions/UserActions';
+} from '@/redux/slice/UserSlice/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import notifee, {EventType} from '@notifee/react-native';
 import PushNotification from 'react-native-push-notification';
@@ -88,16 +88,16 @@ import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
 import {GetConfigApi} from '@/services/apiMethods/configApi';
 import FinancialsListingItem from '@/components/financialListinItem';
 import VersionCheck from 'react-native-version-check';
+import { dispatchToStore, RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 const DashBoardCustomer = props => {
   const focused = useIsFocused();
-  const dispatch = useDispatch();
-  const alertState = useSelector(state => state?.user?.alertState);
-  const userData = useSelector(state => state?.user?.userDetail);
-  const isLoadingRedux = useSelector(state => state?.user?.loading);
-  const paymentConfigs = useSelector(state => state?.user?.paymentConfigs);
-  const backFromPayment = useSelector(state => state?.user?.gotoPayment);
+  const alertState = useSelector((state: RootState) => state?.user?.alertState);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
+  const isLoadingRedux = useSelector((state: RootState) => state?.user?.loading);
+  const paymentConfigs = useSelector((state: RootState) => state?.user?.paymentConfigs);
+  const backFromPayment = useSelector((state: RootState) => state?.user?.gotoPayment);
   const [clickedItem, setClickedItem] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [portfolioListing, setPortfolioListing] = useState([]);
@@ -478,7 +478,7 @@ const DashBoardCustomer = props => {
     getConstructionListing();
     getPortfolioListing();
     getFinancialListing();
-    dispatch(setLoader(false));
+    dispatchToStore(setLoader(false));
     registerDeviceOnBackend();
     StatusBar.setBarStyle('light-content');
     if (Platform.OS == 'android') {
@@ -490,7 +490,7 @@ const DashBoardCustomer = props => {
     if (focused == true) {
       checkVersion();
       if (backFromPayment == true) {
-        dispatch(setGotoPayment(false));
+        dispatchToStore(setGotoPayment(false));
         setFinancialLoader(true);
         getFinancialListing();
       } else {
@@ -502,7 +502,7 @@ const DashBoardCustomer = props => {
         getConstructionListing();
         getPortfolioListing();
         getFinancialListing();
-        dispatch(setLoader(false));
+        dispatchToStore(setLoader(false));
       }
     }
   }, [focused]);
@@ -514,12 +514,9 @@ const DashBoardCustomer = props => {
     }
   }, []);
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+      backHandler.remove();
     };
   }, [payNow]);
   useEffect(() => {
@@ -538,7 +535,7 @@ const DashBoardCustomer = props => {
       // The app is back in the foreground
 
       if (!alertState) {
-        dispatch(setAlertState(true));
+        dispatchToStore(setAlertState(true));
 
         checkVersion();
       }
@@ -567,10 +564,10 @@ const DashBoardCustomer = props => {
       let lv = parseInt(latestVersion);
 
       if (cv < lv) {
-        dispatch(setAlertState(true));
+        dispatchToStore(setAlertState(true));
         updateAppAlert(currentVersion, latestVersion);
       } else {
-        dispatch(setAlertState(false));
+        dispatchToStore(setAlertState(false));
       }
     } catch (error) {
       console.log('checkVersionerror', error);
@@ -584,7 +581,7 @@ const DashBoardCustomer = props => {
         {
           text: 'Update',
           onPress: () => {
-            dispatch(setAlertState(false));
+            dispatchToStore(setAlertState(false));
             updateApp(currentVersion, latestVersion);
           },
         },
@@ -641,7 +638,7 @@ const DashBoardCustomer = props => {
       const error = err as AxiosError;
       console.log('errorregisterDeviceOnBackend', error);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       crashlytics().log('RegisterDevice On Backend Api Agent Dashboard');
@@ -682,9 +679,9 @@ const DashBoardCustomer = props => {
               }
             });
           }
-          dispatch(setNotificationCounts(count));
+          dispatchToStore(setNotificationCounts(count));
         }
-        dispatch(setNotificationCounts(count));
+        dispatchToStore(setNotificationCounts(count));
       } else if (userData?.role != 'guest') {
         const notificationNode = await GetNodeNotifications();
         if (notificationNode?.rowData?.length > 0) {
@@ -694,10 +691,10 @@ const DashBoardCustomer = props => {
             }
           });
         }
-        dispatch(setNotificationCounts(count));
+        dispatchToStore(setNotificationCounts(count));
       } else {
         count = 0;
-        dispatch(setNotificationCounts(0));
+        dispatchToStore(setNotificationCounts(0));
       }
     } catch (error) {
       crashlytics().log('GetNotifications Api Notifications Screen');
@@ -720,14 +717,14 @@ const DashBoardCustomer = props => {
           }).fetch('GET', profileImage);
           const base64Data = await response.base64();
 
-          dispatch(
+          dispatchToStore(
             setUserDetail({
               ...userData,
               profileImage: base64Data,
             }),
           );
         } else {
-          dispatch(
+          dispatchToStore(
             setUserDetail({
               ...userData,
               profileImage: null,
@@ -735,7 +732,7 @@ const DashBoardCustomer = props => {
           );
         }
       } else {
-        dispatch(
+        dispatchToStore(
           setUserDetail({
             ...userData,
             profileImage: null,
@@ -745,10 +742,10 @@ const DashBoardCustomer = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
-      dispatch(
+      dispatchToStore(
         setUserDetail({
           ...userData,
           profileImage: null,
@@ -760,7 +757,7 @@ const DashBoardCustomer = props => {
     try {
       const getConfigData = await GetConfigApi();
       if (getConfigData?.data) {
-        dispatch(setPaymentConfigs(getConfigData?.data));
+        dispatchToStore(setPaymentConfigs(getConfigData?.data));
         // dispatch(
         //   setPaymentConfigs({
         //     vat: 0,
@@ -772,10 +769,10 @@ const DashBoardCustomer = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else {
-        dispatch(
+        dispatchToStore(
           setPaymentConfigs({
             vat: 0,
             processingFee: 0,
@@ -1090,7 +1087,7 @@ const DashBoardCustomer = props => {
       setFinancialsListing([]);
       setFinancialLoader(false);
       if (err?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (err?.response?.status >= 500 && err?.response?.status <= 599) {
         setFinancialCrash('Unable to load data at the moment.');
@@ -1104,7 +1101,7 @@ const DashBoardCustomer = props => {
     try {
       const projectsData = await GetAllProjects();
       // console.log('dsxfcgvhbjnkm,', projectsData);
-      dispatch(setPortfolioMatch(projectsData));
+      dispatchToStore(setPortfolioMatch(projectsData));
       const portfolioListData = await PortfoliListingDashboardApi();
       if (portfolioListData?.length > 0) {
         let arr = [];
@@ -1152,7 +1149,7 @@ const DashBoardCustomer = props => {
       setConstructionUpdateList([]);
       setConstructionLoader(false);
       if (err?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (err?.response?.status >= 500 && err?.response?.status <= 599) {
         setPortfolioCrash('Unable to load data at the moment.');
@@ -1198,7 +1195,7 @@ const DashBoardCustomer = props => {
       crashlytics().log('Get Construction Listing Api Dashboard');
       crashlytics().recordError(error);
       if (err?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         err?.response?.status >= 500 &&
@@ -1238,7 +1235,7 @@ const DashBoardCustomer = props => {
       const error = err as AxiosError;
       setClickedItem(0);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -1247,7 +1244,7 @@ const DashBoardCustomer = props => {
         setPayNow(false);
         setApiCrash(true);
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       crashlytics().log('Get Url Api Dashboard');
       crashlytics().recordError(error);
     }
@@ -1256,8 +1253,8 @@ const DashBoardCustomer = props => {
     try {
       if (url != '') {
         setPayNow(false);
-        dispatch(setLoader(false));
-        dispatch(setGotoPayment(true));
+        dispatchToStore(setLoader(false));
+        dispatchToStore(setGotoPayment(true));
         setClickedItem(0);
         props?.navigation?.navigate('PaymentScreen', {
           url: url,
@@ -1271,7 +1268,7 @@ const DashBoardCustomer = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -1280,7 +1277,7 @@ const DashBoardCustomer = props => {
         setPayNow(false);
         setApiCrash(true);
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       crashlytics().log('ProceedToPay Api Dashboard');
       crashlytics().recordError(error);
     }
@@ -1296,7 +1293,7 @@ const DashBoardCustomer = props => {
     getConstructionListing();
     getPortfolioListing();
     getFinancialListing();
-    dispatch(setLoader(false));
+    dispatchToStore(setLoader(false));
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
@@ -1635,7 +1632,7 @@ const DashBoardCustomer = props => {
           setPayNow(false);
         }}
         onPressProceed={() => {
-          // dispatch(setLoader(true));
+          // dispatchToStore(setLoader(true));
           setTimeout(() => {
             proceedToPay(paymentValue);
           }, 500);

@@ -21,18 +21,18 @@ import ReactNativeBlobUtil from 'react-native-blob-util';
 import Share from 'react-native-share';
 import {getProfilePicUrlApi} from '@/services/apiMethods/authApis';
 import {useDispatch, useSelector} from 'react-redux';
-import {setUserDetail} from '@/redux/actions/UserActions';
+import {setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 import {AxiosError} from 'axios';
 import {DownloadButton} from '@/components/buttons/downloadButton';
+import { RootState } from '@/redux/store';
 let screenHeight = Math.round(Dimensions.get('window').height);
 let screenWidth = Math.round(Dimensions.get('window').width);
 
 export default function InvoiceViewer(props) {
   const [loader, setLoader] = useState(true);
-  const dispatch = useDispatch();
   const [url, setUrl] = useState('');
   const [serverError, setServerError] = useState(false);
-  const userDatails = useSelector(state => state?.user?.userDetail);
+  const userDatails = useSelector((state: RootState) => state?.user?.userDetail);
   const [disableButton, setDisableButton] = useState(false);
   useEffect(() => {
     StatusBar.setBarStyle('light-content');
@@ -64,7 +64,7 @@ export default function InvoiceViewer(props) {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
         setServerError(false);
       } else if (err?.response?.status >= 500 && err?.response?.status <= 599) {

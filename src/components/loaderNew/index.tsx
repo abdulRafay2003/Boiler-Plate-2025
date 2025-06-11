@@ -18,7 +18,6 @@ const LoaderNew = (props: Props) => {
   const {visible, color} = props;
   const [seconds, setSeconds] = useState(60);
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   return (
     <Modal

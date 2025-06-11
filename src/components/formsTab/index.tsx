@@ -13,6 +13,7 @@ import i18next from 'i18next';
 import theme from '@/assets/stylesheet/theme';
 import {FONT_FAMILY} from '@/constants/fontFamily';
 import {useSelector} from 'react-redux';
+import { RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
@@ -33,7 +34,7 @@ export const TabsButton = (props: Props) => {
     whatsAppPress,
     disabledEnquiryTap,
   } = props;
-  const contactDetails = useSelector(state => state?.user?.contactDetails);
+  const contactDetails = useSelector((state: RootState) => state?.user?.contactDetails);
   const sendWhatsApp = num => {
     let msg = '';
     let phoneWithCountryCode = num;

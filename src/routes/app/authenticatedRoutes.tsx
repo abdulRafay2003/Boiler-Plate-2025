@@ -40,13 +40,10 @@ import WebViews from '@/containers/Main/webView';
 import EnquiryForm from '@/containers/sideScreens/enquiryForm';
 import Location from '@/containers/sideScreens/location';
 import MoreModal from '@/containers/more/moreModal';
-import {log} from 'react-native-reanimated';
 import {
-  setOnBoardingComplete,
   setRefresh,
-  setWalkThroughImages,
-} from '@/redux/actions/UserActions';
-import {useDispatch} from 'react-redux';
+} from '@/redux/slice/UserSlice/userSlice';
+import { dispatchToStore } from '@/redux/store';
 import ApplyMortage from '@/containers/sideScreens/applyMortage';
 import PrivacyScreen from '@/containers/sideScreens/privacyPolicy';
 import VideoScreen from '@/containers/sideScreens/videoScreen';
@@ -140,7 +137,6 @@ const AuthNavigator = ({props}) => {
 const MainTabs = props => {
   const navigation = useNavigation();
   const [show, setShow] = useState(false);
-  const dispatch = useDispatch();
   const renderTabBar = ({routeName, selectedTab, navigate}) => {
     const onNavigate = async () => {
       var guestUser = await AsyncStorage.getItem('isGuest');
@@ -266,7 +262,7 @@ const MainTabs = props => {
                 style={{justifyContent: 'center', alignItems: 'center'}}
                 onPress={() => {
                   props?.navigation?.navigate('VRTour');
-                  dispatch(setRefresh(true));
+                  dispatchToStore(setRefresh(true));
                 }}>
                 <Image
                   source={require('@/assets/images/icons/VrTour.png')}
@@ -315,7 +311,7 @@ const MainTabs = props => {
                 style={{justifyContent: 'center', alignItems: 'center'}}
                 onPress={() => {
                   props?.navigation?.navigate('VRTour');
-                  dispatch(setRefresh(true));
+                  dispatchToStore(setRefresh(true));
                 }}>
                 <Image
                   source={require('@/assets/images/icons/VrTour.png')}

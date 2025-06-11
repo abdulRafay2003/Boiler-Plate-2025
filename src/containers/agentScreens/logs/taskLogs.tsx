@@ -44,10 +44,11 @@ import {Loader} from '@/components/loader';
 import {useDispatch, useSelector} from 'react-redux';
 import {deleteImageApi} from '@/services/apiMethods/uploadImage';
 import {ConfirmationPopup} from '@/components/modal/confirmationPopup';
-import {setUserDetail} from '@/redux/actions/UserActions';
 import {AlertPopup} from '@/components/modal/alertPopup';
 import {BASE_URL_GJ} from '@/services/mainServices/config';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
+import { dispatchToStore, RootState } from '@/redux/store';
+import { setUserDetail } from '@/redux/slice/UserSlice/userSlice';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
@@ -56,8 +57,7 @@ const TaskLogs = props => {
   const sheetRef = useRef(null);
   const snapPoints = useMemo(() => ['1%', '1%', '70%'], []);
   const currentDate = new Date();
-  const dispatch = useDispatch();
-  const dataFound = useSelector(state => state?.user?.dropdownData);
+  const dataFound = useSelector((state: RootState) => state?.user?.dropdownData);
   const [title, setTitle] = useState('');
   const [time, setTime] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState();
@@ -91,7 +91,7 @@ const TaskLogs = props => {
   const [allLeadsSkeleton, setAllLeadsSkeleton] = useState(true);
   const [selectedLeadsArray, setSelectedLeadsArray] = useState([]);
   const [images, setImages] = useState([]);
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const [deleteIcon, setDeleteIcon] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -133,12 +133,9 @@ const TaskLogs = props => {
     setValue('selectedLeadsArray', selectedLeadsArray);
   });
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+      backHandler.remove();
     };
   }, [images]);
   const handleBackButtonClick = () => {
@@ -430,7 +427,7 @@ const TaskLogs = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -491,7 +488,7 @@ const TaskLogs = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -547,7 +544,7 @@ const TaskLogs = props => {
       }
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       console.log('deleteError', error?.response?.data?.message);
@@ -567,7 +564,7 @@ const TaskLogs = props => {
         } catch (err) {
           const error = err as AxiosError;
           if (error?.response?.status == 401) {
-            dispatch(setUserDetail({role: 'guest'}));
+            dispatchToStore(setUserDetail({role: 'guest'}));
             props?.navigation?.navigate('Login');
           }
           console.log('errorImageInfo', err?.response);

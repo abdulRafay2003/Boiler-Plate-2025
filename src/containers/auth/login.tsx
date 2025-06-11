@@ -25,7 +25,7 @@ import {
   countriesList,
   excludedCountries,
 } from '@/constants/fontFamily/globalConst';
-import {setLoader, setUserDetail} from '@/redux/actions/UserActions';
+import {setLoader, setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   LoginEmailValidation,
@@ -35,11 +35,12 @@ import {postLogInSmsApi, postLoginApi} from '@/services/apiMethods/authApis';
 import {AxiosError} from 'axios';
 import LoaderNew from '@/components/loaderNew';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
+import { RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
 export default function Login(props) {
-  const isLoadingRedux = useSelector(state => state?.user?.loading);
+  const isLoadingRedux = useSelector((state: RootState) => state?.user?.loading);
   const phone_ref = useRef(null);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -49,7 +50,6 @@ export default function Login(props) {
   const [loginType, setLoginType] = useState('email');
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const dispatch = useDispatch();
   const {
     handleSubmit,
     control,
@@ -65,7 +65,7 @@ export default function Login(props) {
     ),
   });
   useEffect(() => {
-    dispatch(setLoader(false));
+    dispatchToStore(setLoader(false));
     StatusBar.setBarStyle('dark-content');
     if (Platform.OS == 'android') {
       StatusBar.setBackgroundColor('transparent');
@@ -74,7 +74,7 @@ export default function Login(props) {
   }, []);
 
   const onPressLogin = async () => {
-    dispatch(setLoader(true));
+    dispatchToStore(setLoader(true));
     // return;
     try {
       var payLoad = {
@@ -87,9 +87,9 @@ export default function Login(props) {
           from: 'email',
         });
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
     } catch (error) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const err = error as AxiosError;
       setError(true);
       console.log('dxfcgvhjkl', err?.response?.data);
@@ -107,7 +107,7 @@ export default function Login(props) {
   };
 
   const onPressLoginSms = async () => {
-    dispatch(setLoader(true));
+    dispatchToStore(setLoader(true));
     try {
       var payLoad = {
         phone: phoneCode + phone,
@@ -119,9 +119,9 @@ export default function Login(props) {
           from: 'phoneSms',
         });
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
     } catch (error) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const err = error as AxiosError;
       setError(true);
       if (err?.response?.status >= 500 && err?.response?.status <= 599) {

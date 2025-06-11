@@ -30,7 +30,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {
   setNotificationCounts,
   setUserDetail,
-} from '@/redux/actions/UserActions';
+} from '@/redux/slice/UserSlice/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import notifee from '@notifee/react-native';
 import PushNotification from 'react-native-push-notification';
@@ -43,13 +43,13 @@ import {
   ResetNotificationCount,
 } from '@/services/apiMethods/notificationNode';
 import {AxiosError} from 'axios';
+import { RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const Notification = props => {
   const focused = useIsFocused();
-  const dispatch = useDispatch();
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const [notificationList, setNotificationList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMark, setLoadingMark] = useState(false);
@@ -227,14 +227,14 @@ const Notification = props => {
           );
           setNotificationList(sortedArray);
           setLoading(false);
-          dispatch(setNotificationCounts(count));
+          dispatchToStore(setNotificationCounts(count));
         } else {
           let sortedArray = array.sort(
             (a, b) => new Date(b.time) - new Date(a.time),
           );
           setNotificationList(sortedArray);
           setLoading(false);
-          dispatch(setNotificationCounts(count));
+          dispatchToStore(setNotificationCounts(count));
         }
       } else if (userData?.role != 'guest') {
         const reset = await ResetNotificationCount();
@@ -271,16 +271,16 @@ const Notification = props => {
           );
           setNotificationList(sortedArray);
           setLoading(false);
-          dispatch(setNotificationCounts(count));
+          dispatchToStore(setNotificationCounts(count));
         } else {
           setNotificationList([]);
           setLoading(false);
-          dispatch(setNotificationCounts(count));
+          dispatchToStore(setNotificationCounts(count));
         }
       } else {
         setNotificationList([]);
         setLoading(false);
-        dispatch(setNotificationCounts(count));
+        dispatchToStore(setNotificationCounts(count));
       }
       setLoadingMark(false);
     } catch (err) {
@@ -289,7 +289,7 @@ const Notification = props => {
       const error = err as AxiosError;
       console.log('errorerrorerrorerror', error?.response?.data);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -327,7 +327,7 @@ const Notification = props => {
       setLoadingMark(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       crashlytics().log('Mark All As Read Api Notifications Screen');
@@ -388,7 +388,7 @@ const Notification = props => {
       setLoadingMark(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       crashlytics().log('Mark One Read Api Notifications Screen');

@@ -17,10 +17,11 @@ import {FONT_FAMILY} from '@/constants/fontFamily';
 import theme from '@/assets/stylesheet/theme';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {setUserDetail} from '@/redux/actions/UserActions';
+import {setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 import VersionCheck from 'react-native-version-check';
 import {getProfilePicUrlApi} from '@/services/apiMethods/authApis';
 import {ImageProgress} from '@/components/ImageProgress';
+import { RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
@@ -36,10 +37,9 @@ interface Props {
 
 const MoreModal = (props: Props) => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const focused = useIsFocused();
   const [versionNum, setVersionNum] = useState(0);
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
 
   const {
     visible,
@@ -65,12 +65,9 @@ const MoreModal = (props: Props) => {
     {title: 'Notifications', parentStack: 'Menu', route: 'Notification'},
   ];
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+      backHandler.remove();
     };
   }, []);
   useEffect(() => {

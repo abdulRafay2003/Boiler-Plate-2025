@@ -72,12 +72,9 @@ const ApplyMortage = props => {
   }, []);
   useEffect(() => {
     reset({fullName, email, phone, companyName, salary});
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+      backHandler.remove();
     };
   }, [submitted]);
 

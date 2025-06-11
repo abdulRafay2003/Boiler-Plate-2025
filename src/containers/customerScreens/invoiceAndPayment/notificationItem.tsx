@@ -41,7 +41,7 @@ import {
   setGotoPayment,
   setLoader,
   setUserDetail,
-} from '@/redux/actions/UserActions';
+} from '@/redux/slice/UserSlice/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {useIsFocused} from '@react-navigation/native';
@@ -51,12 +51,12 @@ import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
 import {DownPaymentPopup} from '@/components/modal/downpaymentPopup';
 import SingleItemSkeleton from '@/components/skeletons/singleItemSkeleton';
 import {ReciptListingPopup} from '@/components/modal/recieptPopup';
+import { RootState } from '@/redux/store';
 
 let screenHeight = Math.round(Dimensions.get('window').height);
 let screenWidth = Math.round(Dimensions.get('window').width);
 
 export default function NotificationItem(props) {
-  const dispatch = useDispatch();
   const focused = useIsFocused();
   const from = props?.route?.params?.from;
   const contractId = props?.route?.params?.id;
@@ -64,8 +64,8 @@ export default function NotificationItem(props) {
   const unitId = props?.route?.params?.unit;
   const statusLable = props?.route?.params?.status;
   const itemId = props?.route?.params?.itemId;
-  const paymentConfigs = useSelector(state => state?.user?.paymentConfigs);
-  const backFromPayment = useSelector(state => state?.user?.gotoPayment);
+  const paymentConfigs = useSelector((state: RootState) => state?.user?.paymentConfigs);
+  const backFromPayment = useSelector((state: RootState) => state?.user?.gotoPayment);
   const [clickedItem, setClickedItem] = useState(0);
   const [fianancialItem, setFinancialItem] = useState({});
   const [paymentPlanItem, setpaymentPlanItem] = useState({});
@@ -141,7 +141,7 @@ export default function NotificationItem(props) {
 
       setShow(false);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -188,7 +188,7 @@ export default function NotificationItem(props) {
 
       setShow(false);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -226,7 +226,7 @@ export default function NotificationItem(props) {
       const error = err as AxiosError;
       console.log('getFinancialListingerror', error);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -270,7 +270,7 @@ export default function NotificationItem(props) {
       setClickedItem(0);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -279,7 +279,7 @@ export default function NotificationItem(props) {
         setPayNow(false);
         setApiCrash(true);
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       crashlytics().log('Get Url Api Dashboard');
       crashlytics().recordError(error);
     }
@@ -312,7 +312,7 @@ export default function NotificationItem(props) {
       const error = err as AxiosError;
       setClickedItem(0);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -321,7 +321,7 @@ export default function NotificationItem(props) {
         setPayNow(false);
         setApiCrash(true);
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       crashlytics().log('Get Url Api Dashboard');
       crashlytics().recordError(error);
     }
@@ -330,9 +330,9 @@ export default function NotificationItem(props) {
     try {
       if (url != '') {
         setPayNow(false);
-        dispatch(setLoader(false));
+        dispatchToStore(setLoader(false));
         setClickedItem(0);
-        // dispatch(setGotoPayment(true));
+        // dispatchToStore(setGotoPayment(true));
         props?.navigation?.navigate('PaymentScreen', {
           url: url,
         });
@@ -344,11 +344,11 @@ export default function NotificationItem(props) {
         }
       }
     } catch (err) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       setClickedItem(0);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&

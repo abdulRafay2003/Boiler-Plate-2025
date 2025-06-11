@@ -11,47 +11,20 @@ import {
   FlatList,
   ScrollView,
   Platform,
-  PermissionsAndroid,
   StyleSheet,
   ActivityIndicator,
-  AppState,
-  Linking,
-  Alert,
 } from 'react-native';
 import {MaterialTabBar, Tabs} from 'react-native-collapsible-tab-view';
-import LinearGradient from 'react-native-linear-gradient';
-import {useDispatch} from 'react-redux';
-import {
-  setAlertState,
-  setContactDetails,
-  setDeviceRegistered,
-  setNotificationCounts,
-  setOnBoardingComplete,
-} from '@/redux/actions/UserActions';
-import messaging from '@react-native-firebase/messaging';
-import PushNotification from 'react-native-push-notification';
-import DeviceInfo from 'react-native-device-info';
 import List from '@/components/skeletons/list';
-import {GetContactUs} from '@/services/apiMethods/more';
-import {
-  GetNotifications,
-  RegisterDevice,
-} from '@/services/apiMethods/notification';
 import {useIsFocused} from '@react-navigation/native';
-import {ImageProgress} from '@/components/ImageProgress';
 import ProjectSkeleton from '@/components/skeletons/projectsSkeleton';
-import notifee, {EventType} from '@notifee/react-native';
-import crashlytics from '@react-native-firebase/crashlytics';
-import VersionCheck from 'react-native-version-check';
-import {useSelector} from 'react-redux';
-import axios from 'axios';
 import {Headers} from '@/components/header/headers';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
 const ScheduleViewing = props => {
-  const flatListRef = useRef();
-  const flatListRef1 = useRef();
+  const flatListRef = useRef(null);
+  const flatListRef1 = useRef(null);
   const [lengthRTM, setLengthRTM] = useState(0);
   const [lengthUC, setLengthUC] = useState(0);
   const [listLoader, setListLoader] = useState(false);

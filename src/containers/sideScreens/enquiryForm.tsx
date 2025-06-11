@@ -33,6 +33,7 @@ import {AxiosError} from 'axios';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {useSelector} from 'react-redux';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
+import { RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 const EnquiryForm = props => {
@@ -41,7 +42,7 @@ const EnquiryForm = props => {
   const [submitted, setSubmitted] = useState(false);
   const [showCountries, setShowCountries] = useState(false);
   const [maxNum, setMaxNum] = useState(9);
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const [focused, setFocused] = useState('');
   const [fullName, setFName] = useState('');
   const [email, setEmail] = useState('');
@@ -64,12 +65,9 @@ const EnquiryForm = props => {
     reset({fullName});
     reset({email});
     reset({phone});
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+      backHandler.remove();
     };
   }, [submitted]);
   useEffect(() => {

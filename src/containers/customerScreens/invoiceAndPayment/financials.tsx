@@ -25,7 +25,7 @@ import {
   setGotoPayment,
   setLoader,
   setUserDetail,
-} from '@/redux/actions/UserActions';
+} from '@/redux/slice/UserSlice/userSlice';
 import {
   buttonBackgroundColor,
   buttonHeight,
@@ -50,18 +50,17 @@ import {
 import crashlytics from '@react-native-firebase/crashlytics';
 import {AxiosError} from 'axios';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
-import {log} from 'react-native-reanimated';
 import {useIsFocused} from '@react-navigation/native';
 import FinancialsListingItem from '@/components/financialListinItem';
+import { dispatchToStore, RootState } from '@/redux/store';
 let screenHeight = Math.round(Dimensions.get('window').height);
 let screenWidth = Math.round(Dimensions.get('window').width);
 
 export default function Financials(props) {
-  const dispatch = useDispatch();
   const focus = useIsFocused();
-  const dates = useSelector(state => state?.user?.calendarDate);
-  const paymentConfigs = useSelector(state => state?.user?.paymentConfigs);
-  const backFromPayment = useSelector(state => state?.user?.gotoPayment);
+  const dates = useSelector((state: RootState) => state?.user?.calendarDate);
+  const paymentConfigs = useSelector((state: RootState) => state?.user?.paymentConfigs);
+  const backFromPayment = useSelector((state: RootState) => state?.user?.gotoPayment);
   const [bSOpen, setBSOpen] = useState(false);
   const [propertyDropDown, setPropertyDropdown] = useState(false);
   const [unitDropDown, setUnitDropdown] = useState(false);
@@ -226,7 +225,7 @@ export default function Financials(props) {
     getAllDaysInMonthEndDate(currentMonthIndexEndDate, currentYearIndexEndDate);
     setSelectedDayEndDate(currentDay - 1);
     setSelectedDayDateEnd(currentDay - 1);
-    dispatch(
+    dispatchToStore(
       setCalendarDate({
         startDay: currentDay - 1,
         startMonth: currentMonthIndex,
@@ -250,7 +249,7 @@ export default function Financials(props) {
   useEffect(() => {
     setNotificationStatus(props?.route?.params?.status);
     if (backFromPayment == true) {
-      dispatch(setGotoPayment(false));
+      dispatchToStore(setGotoPayment(false));
       setListLoading(true);
       getFinancialListing(
         propertyId,
@@ -273,12 +272,9 @@ export default function Financials(props) {
   }, [focus]);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+      backHandler.remove();
     };
   }, [payNow]);
   const handleBackButtonClick = () => {
@@ -754,7 +750,7 @@ export default function Financials(props) {
           ' to ' +
           moment(endDateStr).format('DD-MM-YYYY'),
       );
-      dispatch(
+      dispatchToStore(
         setCalendarDate({
           startDay: new Date(startDate).getDate() - 1,
           startMonth: new Date(startDate).getMonth(),
@@ -1104,7 +1100,7 @@ export default function Financials(props) {
       setLoading(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -1233,7 +1229,7 @@ export default function Financials(props) {
       setLoading(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -1291,7 +1287,7 @@ export default function Financials(props) {
 
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -1331,7 +1327,7 @@ export default function Financials(props) {
       const error = err as AxiosError;
       setClickedItem(0);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -1340,7 +1336,7 @@ export default function Financials(props) {
         setPayNow(false);
         setApiCrash(true);
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       crashlytics().log('Get Url Api Dashboard');
       crashlytics().recordError(error);
     }
@@ -1349,7 +1345,7 @@ export default function Financials(props) {
     try {
       if (url != '') {
         setPayNow(false);
-        dispatch(setLoader(false));
+        dispatchToStore(setLoader(false));
         setClickedItem(0);
         props?.navigation?.navigate('PaymentScreen', {
           url: url,
@@ -1361,11 +1357,11 @@ export default function Financials(props) {
         getUrl(paymentValue);
       }
     } catch (err) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       setClickedItem(0);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&

@@ -19,12 +19,13 @@ import AboutSkeleton from '@/components/skeletons/about';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {useSelector} from 'react-redux';
 import {AxiosError} from 'axios';
+import { RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
 const About = props => {
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const [tabList, setTabList] = useState([
     'Our Story',
     'Our Track Record',

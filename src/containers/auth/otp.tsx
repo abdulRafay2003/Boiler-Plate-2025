@@ -21,7 +21,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AxiosError} from 'axios';
 import {ConfirmationPopup} from '@/components/modal/confirmationPopup';
 import crashlytics from '@react-native-firebase/crashlytics';
-import {setLoader, setUserDetail} from '@/redux/actions/UserActions';
+import {setLoader, setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 import {
   getProfilePicUrlApi,
   postLogInSmsApi,
@@ -34,6 +34,7 @@ import LoaderNew from '@/components/loaderNew';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
 import {ThankYouPopup} from '@/components/modal/thankyouPopUp';
+import { dispatchToStore, RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
@@ -41,7 +42,7 @@ export default function Otp(props) {
   const loginData = props?.route?.params?.data;
   const routeFrom = props?.route?.params?.from;
   const phoneData = props?.route?.params?.phoneNo;
-  const isLoadingRedux = useSelector(state => state?.user?.loading);
+  const isLoadingRedux = useSelector((state: RootState) => state?.user?.loading);
   const _otpRef = useRef(null);
   const [otpCode, setOtpCode] = useState('');
   const [seconds, setSeconds] = useState(60);
@@ -52,7 +53,6 @@ export default function Otp(props) {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const [showThankyou, setShowThankyou] = useState(false);
   const [thanksText, setThanksText] = useState('');
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function Otp(props) {
   };
 
   const resendEmailOtp = async () => {
-    dispatch(setLoader(true));
+    dispatchToStore(setLoader(true));
     setSeconds(60);
     try {
       var payLoad = {
@@ -91,11 +91,11 @@ export default function Otp(props) {
       };
       const responseEmailOtp = await resendOtpApi(payLoad);
       // Alert.alert(responseEmailOtp?.message);
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       setShowThankyou(true);
       setThanksText(responseEmailOtp?.message);
     } catch (error) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const err = error as AxiosError;
       // Alert.alert(err?.response?.data?.message?.toString());
       setError(true);
@@ -112,7 +112,7 @@ export default function Otp(props) {
   };
 
   const resendPhoneSmsOtp = async () => {
-    dispatch(setLoader(true));
+    dispatchToStore(setLoader(true));
     setSeconds(60);
     try {
       var payLoad = {
@@ -120,11 +120,11 @@ export default function Otp(props) {
       };
       const responsePhoneSmsOtp = await resendOtpApi(payLoad);
       // Alert.alert(responsePhoneSmsOtp?.message);
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       setShowThankyou(true);
       setThanksText(responsePhoneSmsOtp?.message);
     } catch (error) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const err = error as AxiosError;
       // Alert.alert(err?.response?.data?.message?.toString());
       setError(true);
@@ -141,7 +141,7 @@ export default function Otp(props) {
   };
 
   const resendSignUpOtp = async () => {
-    dispatch(setLoader(true));
+    dispatchToStore(setLoader(true));
     setSeconds(60);
     try {
       var payLoad = {
@@ -150,11 +150,11 @@ export default function Otp(props) {
       };
       const responseSignUpOtp = await resendOtpApi(payLoad);
       // Alert.alert(responseSignUpOtp?.message);
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       setShowThankyou(true);
       setThanksText(responseSignUpOtp?.message);
     } catch (error) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const err = error as AxiosError;
       setError(true);
       if (err?.response?.status >= 500 && err?.response?.status <= 599) {
@@ -195,11 +195,11 @@ export default function Otp(props) {
                 otp: otpCode,
                 deviceToken: 'noToken backend issue',
               };
-        dispatch(setLoader(true));
+        dispatchToStore(setLoader(true));
         const responseLoginVerify = await postOtpVerifyApi(payLoad);
         if (responseLoginVerify?.statusCode == 200) {
           if (responseLoginVerify?.data?.user?.type == 'customer') {
-            dispatch(
+            dispatchToStore(
               setUserDetail({
                 ...responseLoginVerify?.data,
                 role:
@@ -209,13 +209,13 @@ export default function Otp(props) {
                 profileImage: 'profile',
               }),
             );
-            dispatch(setLoader(false));
+            dispatchToStore(setLoader(false));
             props.navigation.reset({
               index: 0,
               routes: [{name: 'DashboardCustomer'}],
             });
           } else if (responseLoginVerify?.data?.user?.type == 'agent') {
-            dispatch(
+            dispatchToStore(
               setUserDetail({
                 ...responseLoginVerify?.data,
                 role:
@@ -225,20 +225,20 @@ export default function Otp(props) {
                 profileImage: 'profile',
               }),
             );
-            dispatch(setLoader(false));
+            dispatchToStore(setLoader(false));
             props?.navigation?.reset({
               index: 0,
               routes: [{name: 'DashboardAgent'}],
             });
           }
         } else {
-          dispatch(setLoader(false));
+          dispatchToStore(setLoader(false));
         }
       } else {
         setErrorView(true);
       }
     } catch (error) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const err = error as AxiosError;
       setError(true);
       if (err?.response?.status >= 500 && err?.response?.status <= 599) {

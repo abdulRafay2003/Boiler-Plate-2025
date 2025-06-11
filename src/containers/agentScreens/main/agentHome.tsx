@@ -37,12 +37,6 @@ import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 import {Loader} from '@/components/loader';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {
-  setAlertState,
-  setDropDownData,
-  setNotificationCounts,
-  setUserDetail,
-} from '@/redux/actions/UserActions';
 import {useDispatch, useSelector} from 'react-redux';
 import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import PushNotification from 'react-native-push-notification';
@@ -69,14 +63,20 @@ import {
   ResetNotificationCount,
 } from '@/services/apiMethods/notificationNode';
 import VersionCheck from 'react-native-version-check';
+import {dispatchToStore, RootState} from '@/redux/store';
+import {
+  setAlertState,
+  setDropDownData,
+  setNotificationCounts,
+  setUserDetail,
+} from '@/redux/slice/UserSlice/userSlice';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const AgentHome = props => {
-  const alertState = useSelector(state => state?.user?.alertState);
-  const userData = useSelector(state => state?.user?.userDetail);
+  const alertState = useSelector((state: RootState) => state?.user?.alertState);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const focused = useIsFocused();
-  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [showLoader, setShowLoader] = useState('');
   const [downloadStart, setDownloadStart] = useState(false);
@@ -203,50 +203,50 @@ const AgentHome = props => {
           notification?.data?.post_type == 'Project'
             ? 'ProjectDetails'
             : notification?.data?.post_type == 'Construction Update'
-            ? 'ConstructionUpdateDetail'
-            : notification?.data?.type == 'agent'
-            ? 'userProfile'
-            : notification?.data?.type == 'customer'
-            ? 'userProfile'
-            : notification?.data?.type == 'activity'
-            ? 'SingleLeadDetails'
-            : notification?.data?.type == 'multipleactivity'
-            ? 'ActivityDetails'
-            : notification?.data?.type == 'lead'
-            ? 'SingleLeadDetails'
-            : notification?.data?.type == 'financial'
-            ? 'NotificationItem'
-            : notification?.data?.type == 'contract'
-            ? 'PortfolioDetail'
-            : notification?.data?.type == 'paymentPlan'
-            ? 'NotificationItem'
-            : notification?.data?.type == 'general'
-            ? 'Notification'
-            : 'BlogDetail';
+              ? 'ConstructionUpdateDetail'
+              : notification?.data?.type == 'agent'
+                ? 'userProfile'
+                : notification?.data?.type == 'customer'
+                  ? 'userProfile'
+                  : notification?.data?.type == 'activity'
+                    ? 'SingleLeadDetails'
+                    : notification?.data?.type == 'multipleactivity'
+                      ? 'ActivityDetails'
+                      : notification?.data?.type == 'lead'
+                        ? 'SingleLeadDetails'
+                        : notification?.data?.type == 'financial'
+                          ? 'NotificationItem'
+                          : notification?.data?.type == 'contract'
+                            ? 'PortfolioDetail'
+                            : notification?.data?.type == 'paymentPlan'
+                              ? 'NotificationItem'
+                              : notification?.data?.type == 'general'
+                                ? 'Notification'
+                                : 'BlogDetail';
         const parent_route =
           notification?.data?.post_type == 'Project'
             ? ''
             : notification?.data?.post_type == 'Construction Update'
-            ? 'ADashboard'
-            : notification?.data?.type == 'agent'
-            ? ''
-            : notification?.data?.type == 'customer'
-            ? ''
-            : notification?.data?.type == 'activity'
-            ? 'ADashboard'
-            : notification?.data?.type == 'multipleactivity'
-            ? 'ADashboard'
-            : notification?.data?.type == 'lead'
-            ? 'ADashboard'
-            : notification?.data?.type == 'financial'
-            ? 'CDashboard'
-            : notification?.data?.type == 'contract'
-            ? 'CDashboard'
-            : notification?.data?.type == 'paymentPlan'
-            ? 'CDashboard'
-            : notification?.data?.type == 'general'
-            ? ''
-            : 'Menu';
+              ? 'ADashboard'
+              : notification?.data?.type == 'agent'
+                ? ''
+                : notification?.data?.type == 'customer'
+                  ? ''
+                  : notification?.data?.type == 'activity'
+                    ? 'ADashboard'
+                    : notification?.data?.type == 'multipleactivity'
+                      ? 'ADashboard'
+                      : notification?.data?.type == 'lead'
+                        ? 'ADashboard'
+                        : notification?.data?.type == 'financial'
+                          ? 'CDashboard'
+                          : notification?.data?.type == 'contract'
+                            ? 'CDashboard'
+                            : notification?.data?.type == 'paymentPlan'
+                              ? 'CDashboard'
+                              : notification?.data?.type == 'general'
+                                ? ''
+                                : 'Menu';
 
         if (parent_route != '') {
           let params;
@@ -418,52 +418,58 @@ const AgentHome = props => {
                 detail?.notification?.data?.post_type == 'Project'
                   ? 'ProjectDetails'
                   : detail?.notification?.data?.post_type ==
-                    'Construction Update'
-                  ? 'ConstructionUpdateDetail'
-                  : detail?.notification?.data?.type == 'agent'
-                  ? 'userProfile'
-                  : detail?.notification?.data?.type == 'customer'
-                  ? 'userProfile'
-                  : detail?.notification?.data?.type == 'activity'
-                  ? 'SingleLeadDetails'
-                  : detail?.notification?.data?.type == 'multipleactivity'
-                  ? 'ActivityDetails'
-                  : detail?.notification?.data?.type == 'lead'
-                  ? 'SingleLeadDetails'
-                  : detail?.notification?.data?.type == 'financial'
-                  ? 'NotificationItem'
-                  : detail?.notification?.data?.type == 'contract'
-                  ? 'PortfolioDetail'
-                  : detail?.notification?.data?.type == 'paymentPlan'
-                  ? 'PaymentPlan'
-                  : detail?.notification?.data?.type == 'general'
-                  ? 'Notification'
-                  : 'BlogDetail';
+                      'Construction Update'
+                    ? 'ConstructionUpdateDetail'
+                    : detail?.notification?.data?.type == 'agent'
+                      ? 'userProfile'
+                      : detail?.notification?.data?.type == 'customer'
+                        ? 'userProfile'
+                        : detail?.notification?.data?.type == 'activity'
+                          ? 'SingleLeadDetails'
+                          : detail?.notification?.data?.type ==
+                              'multipleactivity'
+                            ? 'ActivityDetails'
+                            : detail?.notification?.data?.type == 'lead'
+                              ? 'SingleLeadDetails'
+                              : detail?.notification?.data?.type == 'financial'
+                                ? 'NotificationItem'
+                                : detail?.notification?.data?.type == 'contract'
+                                  ? 'PortfolioDetail'
+                                  : detail?.notification?.data?.type ==
+                                      'paymentPlan'
+                                    ? 'PaymentPlan'
+                                    : detail?.notification?.data?.type ==
+                                        'general'
+                                      ? 'Notification'
+                                      : 'BlogDetail';
               const parent_route =
                 detail?.notification?.data?.post_type == 'Project'
                   ? ''
                   : detail?.notification?.data?.post_type ==
-                    'Construction Update'
-                  ? 'ADashboard'
-                  : detail?.notification?.data?.type == 'agent'
-                  ? ''
-                  : detail?.notification?.data?.type == 'customer'
-                  ? ''
-                  : detail?.notification?.data?.type == 'activity'
-                  ? 'ADashboard'
-                  : detail?.notification?.data?.type == 'multipleactivity'
-                  ? 'ADashboard'
-                  : detail?.notification?.data?.type == 'lead'
-                  ? 'ADashboard'
-                  : detail?.notification?.data?.type == 'financial'
-                  ? 'CDashboard'
-                  : detail?.notification?.data?.type == 'contract'
-                  ? 'CDashboard'
-                  : detail?.notification?.data?.type == 'paymentPlan'
-                  ? 'CDashboard'
-                  : detail?.notification?.data?.type == 'general'
-                  ? ''
-                  : 'Menu';
+                      'Construction Update'
+                    ? 'ADashboard'
+                    : detail?.notification?.data?.type == 'agent'
+                      ? ''
+                      : detail?.notification?.data?.type == 'customer'
+                        ? ''
+                        : detail?.notification?.data?.type == 'activity'
+                          ? 'ADashboard'
+                          : detail?.notification?.data?.type ==
+                              'multipleactivity'
+                            ? 'ADashboard'
+                            : detail?.notification?.data?.type == 'lead'
+                              ? 'ADashboard'
+                              : detail?.notification?.data?.type == 'financial'
+                                ? 'CDashboard'
+                                : detail?.notification?.data?.type == 'contract'
+                                  ? 'CDashboard'
+                                  : detail?.notification?.data?.type ==
+                                      'paymentPlan'
+                                    ? 'CDashboard'
+                                    : detail?.notification?.data?.type ==
+                                        'general'
+                                      ? ''
+                                      : 'Menu';
               if (parent_route != '') {
                 let params;
                 if (route == 'SingleLeadDetails') {
@@ -632,7 +638,7 @@ const AgentHome = props => {
       // The app is back in the foreground
 
       if (!alertState) {
-        dispatch(setAlertState(true));
+        dispatchToStore(setAlertState(true));
 
         checkVersion();
       }
@@ -661,10 +667,10 @@ const AgentHome = props => {
       let lv = parseInt(latestVersion);
 
       if (cv < lv) {
-        dispatch(setAlertState(true));
+        dispatchToStore(setAlertState(true));
         updateAppAlert(currentVersion, latestVersion);
       } else {
-        dispatch(setAlertState(false));
+        dispatchToStore(setAlertState(false));
       }
     } catch (error) {
       console.log('checkVersionerror', error);
@@ -678,7 +684,7 @@ const AgentHome = props => {
         {
           text: 'Update',
           onPress: () => {
-            dispatch(setAlertState(false));
+            dispatchToStore(setAlertState(false));
             updateApp(currentVersion, latestVersion);
           },
         },
@@ -721,7 +727,7 @@ const AgentHome = props => {
       setLeadsSkeleton(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -743,7 +749,7 @@ const AgentHome = props => {
       setActivitiesSkeleton(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -789,9 +795,9 @@ const AgentHome = props => {
               }
             });
           }
-          dispatch(setNotificationCounts(count));
+          dispatchToStore(setNotificationCounts(count));
         }
-        dispatch(setNotificationCounts(count));
+        dispatchToStore(setNotificationCounts(count));
       } else if (userData?.role != 'guest') {
         const notificationNode = await GetNodeNotifications();
         if (notificationNode?.rowData?.length > 0) {
@@ -801,10 +807,10 @@ const AgentHome = props => {
             }
           });
         }
-        dispatch(setNotificationCounts(count));
+        dispatchToStore(setNotificationCounts(count));
       } else {
         count = 0;
-        dispatch(setNotificationCounts(0));
+        dispatchToStore(setNotificationCounts(0));
       }
     } catch (error) {
       crashlytics().log('GetNotifications Api Notifications Screen');
@@ -825,14 +831,14 @@ const AgentHome = props => {
           }).fetch('GET', profileImage);
           const base64Data = await response.base64();
 
-          dispatch(
+          dispatchToStore(
             setUserDetail({
               ...userData,
               profileImage: base64Data,
             }),
           );
         } else {
-          dispatch(
+          dispatchToStore(
             setUserDetail({
               ...userData,
               profileImage: null,
@@ -840,7 +846,7 @@ const AgentHome = props => {
           );
         }
       } else {
-        dispatch(
+        dispatchToStore(
           setUserDetail({
             ...userData,
             profileImage: null,
@@ -850,10 +856,10 @@ const AgentHome = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
-      dispatch(
+      dispatchToStore(
         setUserDetail({
           ...userData,
           profileImage: null,
@@ -1589,10 +1595,10 @@ const AgentHome = props => {
             keyF.id != undefined
               ? keyF?.id
               : keyF.recordid != undefined
-              ? keyF?.recordid
-              : keyF?.key != undefined
-              ? keyF?.key
-              : keyF?.id,
+                ? keyF?.recordid
+                : keyF?.key != undefined
+                  ? keyF?.key
+                  : keyF?.id,
 
           title: keyF.name != undefined ? keyF.name : keyF?.value,
         }));
@@ -1600,11 +1606,11 @@ const AgentHome = props => {
         return acc;
       }, {});
 
-      dispatch(setDropDownData(mappedObject));
+      dispatchToStore(setDropDownData(mappedObject));
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       console.log('dataErrorr', error?.response?.data);
@@ -1765,7 +1771,7 @@ const AgentHome = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       crashlytics().log('RegisterDevice On Backend Api Agent Dashboard');

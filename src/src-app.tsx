@@ -13,7 +13,7 @@ import applyConfigSettings from './config/index';
 import DataHandler from './services/mainServices/dataHandler.service';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
-import configureStore from './redux/Store';
+import {persistor, store} from './redux/store';
 import InternetConnectionAlert from 'react-native-internet-connection-alert';
 import Video from 'react-native-video';
 import MainNavigator from './routes/app/MainNavigator';
@@ -24,9 +24,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 
-const {store, persistor} = configureStore();
-DataHandler.setStore(store);
-
 applyConfigSettings();
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
@@ -34,7 +31,7 @@ LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const Main = props => {
-  const refVideo = useRef();
+  const refVideo = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [appState, setAppState] = useState(AppState.currentState);
   const [isMounted, setIsMounted] = useState(true);

@@ -8,8 +8,6 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  StyleSheet,
-  Alert,
   ActivityIndicator,
   Platform,
 } from 'react-native';
@@ -19,40 +17,32 @@ import {FONT_FAMILY} from '@/constants/fontFamily';
 import {useIsFocused} from '@react-navigation/native';
 import LeadDetailLogDetailSkeleton from '@/components/skeletons/leadDetailLogsDetailSkeleton';
 import LeadDetailHeaderSkeleton from '@/components/skeletons/leadDetailSkeleton';
-import LeadDetailLogListSkeleton from '@/components/skeletons/leadActivityListSkeleton';
 import ActivityItem from '@/components/cards/activityItem';
 import RenderOverview from '@/components/renderOverview';
 import {Tabs, MaterialTabBar} from 'react-native-collapsible-tab-view';
 import OverviewSkeleton from '@/components/skeletons/overViewSkeleton';
 import LeadActivityListSkeleton from '@/components/skeletons/leadActivityListSkeleton';
 import LeadTabSkeleton from '@/components/skeletons/leadTabSkeleton';
-import {DropDownButton} from '@/components/buttons/dropDownButton';
 import moment from 'moment';
 import ActivityLogItem from '@/components/cards/activityLogItem';
 import LogActivityBottomSheet from '@/components/agentBottomSheets/logActivity';
 import FilterCalendarBottomSheet from '@/components/calenderBottomSheet';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {
   setCalendarDate,
-  setLoader,
-  setScrollMulti,
   setUserDetail,
-} from '@/redux/actions/UserActions';
+} from '@/redux/slice/UserSlice/userSlice';
 import {LeadsDetailApi, LeadsStatusApi} from '@/services/apiMethods/leadsApis';
 import {AxiosError} from 'axios';
-import LoaderNew from '@/components/loaderNew';
 import {ThankYouPopup} from '@/components/modal/thankyouPopUp';
 import {Loader} from '@/components/loader';
-import {
-  getActivitieDetailApi,
-  getAllActivitiesApi,
-} from '@/services/apiMethods/activitiesApi';
+import {getActivitieDetailApi} from '@/services/apiMethods/activitiesApi';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
+import {dispatchToStore, RootState} from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const SingleLeadDetails = props => {
-  const dispatch = useDispatch();
   const focused = useIsFocused();
   const swipeFlatlist = useRef(null);
   const overViewData = props?.route?.params?.overview;
@@ -194,7 +184,7 @@ const SingleLeadDetails = props => {
     }
   }, [focused]);
 
-  const dates = useSelector(state => state?.user?.calendarDate);
+  const dates = useSelector((state: RootState) => state?.user?.calendarDate);
   const [startDate, setStartDate] = useState(new Date());
   const [skeletonLoading, setSkeletonLoading] = useState(true);
   const [edDate, setEndDate] = useState(new Date());
@@ -303,7 +293,7 @@ const SingleLeadDetails = props => {
     setselectedMonthEndDate(currentMonthIndexEndDate);
     getAllDaysInMonthEndDate(currentMonthIndexEndDate, currentYearIndexEndDate);
     setSelectedDayEndDate(currentDay - 1);
-    dispatch(
+    dispatchToStore(
       setCalendarDate({
         startDay: currentDay - 1,
         startMonth: currentMonthIndex,
@@ -790,7 +780,7 @@ const SingleLeadDetails = props => {
           ' to ' +
           moment(endDateStr).format('DD-MM-YYYY'),
       );
-      dispatch(
+      dispatchToStore(
         setCalendarDate({
           startDay: new Date(startDate).getDate() - 1,
           startMonth: new Date(startDate).getMonth(),
@@ -843,7 +833,7 @@ const SingleLeadDetails = props => {
     setselectedMonthEndDate(currentMonthIndexEndDate);
     getAllDaysInMonthEndDate(currentMonthIndexEndDate, currentYearIndexEndDate);
     setSelectedDayEndDate(currentDay - 1);
-    dispatch(
+    dispatchToStore(
       setCalendarDate({
         startDay: currentDay - 1,
         startMonth: currentMonthIndex,
@@ -960,7 +950,7 @@ const SingleLeadDetails = props => {
       setPage(1);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -1396,7 +1386,7 @@ const SingleLeadDetails = props => {
       setLoadingMark(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -1425,7 +1415,7 @@ const SingleLeadDetails = props => {
       setShowError(true);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&

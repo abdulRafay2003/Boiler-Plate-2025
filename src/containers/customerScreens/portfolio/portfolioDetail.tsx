@@ -41,7 +41,7 @@ import {
   setGotoPayment,
   setLoader,
   setUserDetail,
-} from '@/redux/actions/UserActions';
+} from '@/redux/slice/UserSlice/userSlice';
 import {
   FinancialsListingApi,
   PaymentIntent,
@@ -52,16 +52,16 @@ import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 import FinancialsListingItem from '@/components/financialListinItem';
+import { RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
 export default function PortfolioDetail(props) {
-  const dispatch = useDispatch();
   const sheetRef = useRef(null);
   const focused = useIsFocused();
-  const paymentConfigs = useSelector(state => state?.user?.paymentConfigs);
-  const backFromPayment = useSelector(state => state?.user?.gotoPayment);
+  const paymentConfigs = useSelector((state: RootState) => state?.user?.paymentConfigs);
+  const backFromPayment = useSelector((state: RootState) => state?.user?.gotoPayment);
   const [clickedItem, setClickedItem] = useState(0);
   const [projectMedia, setProjectMedia] = useState([]);
   const [openImageViewer, setOpenImageViewer] = useState(false);
@@ -75,7 +75,7 @@ export default function PortfolioDetail(props) {
   const [loadingNodeCU, setLoadingNodeCU] = useState(true);
   const [projectDetailsWordPress, setProjectDetailsWordPress] = useState({});
   const [projectDetailsNode, setProjectDetailsNode] = useState({});
-  const getPortfolioDetail = useSelector(state => state?.user?.potfolioObject);
+  const getPortfolioDetail = useSelector((state: RootState) => state?.user?.potfolioObject);
   const [dotIndex, setDotIndex] = useState(0);
   const [constructionUpdateList, setConstructionUpdateList] = useState([]);
   const [financialsListing, setFinancialsListing] = useState([]);
@@ -117,7 +117,7 @@ export default function PortfolioDetail(props) {
   useEffect(() => {
     if (focused == true && backFromPayment == true) {
       setLoadingNodeF(true);
-      dispatch(setGotoPayment(false));
+      dispatchToStore(setGotoPayment(false));
       getFinancialListing(
         props?.route?.params?.nPropertyId,
         props?.route?.params?.nUnitId,
@@ -125,12 +125,9 @@ export default function PortfolioDetail(props) {
     }
   }, [focused]);
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+      backHandler.remove();
     };
   }, [payNow]);
   const handleBackButtonClick = () => {
@@ -157,7 +154,7 @@ export default function PortfolioDetail(props) {
     } catch (error) {
       const err = error as AxiosError;
       if (err?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (err?.response?.status >= 500 && err?.response?.status <= 599) {
         setFinancialCrash('Unable to load data at the moment.');
@@ -220,7 +217,7 @@ export default function PortfolioDetail(props) {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
       console.log('portfolioDataerror', error);
@@ -245,7 +242,7 @@ export default function PortfolioDetail(props) {
     } catch (error) {
       const err = error as AxiosError;
       if (err?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (err?.response?.status >= 500 && err?.response?.status <= 599) {
         setConstructionUpdateList([]);
@@ -580,7 +577,7 @@ export default function PortfolioDetail(props) {
       const error = err as AxiosError;
       setClickedItem(0);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -589,7 +586,7 @@ export default function PortfolioDetail(props) {
         setPayNow(false);
         setApiCrash(true);
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       crashlytics().log('Get Url Api Dashboard');
       crashlytics().recordError(error);
     }
@@ -639,7 +636,7 @@ export default function PortfolioDetail(props) {
   //   } catch (err) {
   //     const error = err as AxiosError;
   //     if (error?.response?.status == 401) {
-  //       dispatch(setUserDetail({role: 'guest'}));
+  //       dispatchToStore(setUserDetail({role: 'guest'}));
   //       props?.navigation?.navigate('Login');
   //     } else if (
   //       error?.response?.status >= 500 &&
@@ -648,7 +645,7 @@ export default function PortfolioDetail(props) {
   //       setPayNow(false);
   //       setApiCrash(true);
   //     }
-  //     dispatch(setLoader(false));
+  //     dispatchToStore(setLoader(false));
   //     crashlytics().log('Get Url Api Dashboard');
   //     crashlytics().recordError(error);
   //   }
@@ -657,8 +654,8 @@ export default function PortfolioDetail(props) {
     try {
       if (url != '') {
         setPayNow(false);
-        dispatch(setLoader(false));
-        dispatch(setGotoPayment(true));
+        dispatchToStore(setLoader(false));
+        dispatchToStore(setGotoPayment(true));
         setClickedItem(0);
         props?.navigation?.navigate('PaymentScreen', {
           url: url,
@@ -670,10 +667,10 @@ export default function PortfolioDetail(props) {
         getUrl(paymentValue);
       }
     } catch (err) {
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -941,7 +938,7 @@ export default function PortfolioDetail(props) {
         }}
         onPressProceed={() => {
           // setPayNow(false);
-          // dispatch(setLoader(true));
+          // dispatchToStore(setLoader(true));
           setTimeout(() => {
             proceedToPay(paymentValue);
           }, 500);

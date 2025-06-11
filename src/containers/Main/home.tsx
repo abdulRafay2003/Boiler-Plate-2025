@@ -21,14 +21,13 @@ import {
 // import Carousel, {ParallaxImage} from 'react-native-snap-carousel';
 import {MaterialTabBar, Tabs} from 'react-native-collapsible-tab-view';
 import LinearGradient from 'react-native-linear-gradient';
-import {useDispatch} from 'react-redux';
+import { dispatchToStore, RootState } from '@/redux/store';
 import {
   setAlertState,
   setContactDetails,
   setDeviceRegistered,
   setNotificationCounts,
-  setOnBoardingComplete,
-} from '@/redux/actions/UserActions';
+} from '@/redux/slice/UserSlice/userSlice';
 import {
   GetHomeHeader,
   GetPaginatedProjects,
@@ -66,12 +65,11 @@ let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
 const Home = props => {
-  const dispatch = useDispatch();
   const flatListRef = useRef();
   const flatListRef1 = useRef();
-  const alertState = useSelector(state => state?.user?.alertState);
-  const count = useSelector(state => state?.user?.notificationCount);
-  const userData = useSelector(state => state?.user?.userDetail);
+  const alertState = useSelector((state: RootState) => state?.user?.alertState);
+  const count = useSelector((state: RootState) => state?.user?.notificationCount);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const [page, setPage] = useState(1);
   const [lengthRTM, setLengthRTM] = useState(0);
   const [lengthUC, setLengthUC] = useState(0);
@@ -556,7 +554,7 @@ const Home = props => {
       // The app is back in the foreground
 
       if (!alertState) {
-        dispatch(setAlertState(true));
+        dispatchToStore(setAlertState(true));
 
         checkVersion();
       }
@@ -585,10 +583,10 @@ const Home = props => {
       let lv = parseInt(latestVersion);
 
       if (cv < lv) {
-        dispatch(setAlertState(true));
+        dispatchToStore(setAlertState(true));
         updateAppAlert(currentVersion, latestVersion);
       } else {
-        dispatch(setAlertState(false));
+        dispatchToStore(setAlertState(false));
       }
     } catch (error) {
       console.log('checkVersionerror', error);
@@ -602,7 +600,7 @@ const Home = props => {
         {
           text: 'Update',
           onPress: () => {
-            dispatch(setAlertState(false));
+            dispatchToStore(setAlertState(false));
             updateApp(currentVersion, latestVersion);
           },
         },
@@ -654,11 +652,11 @@ const Home = props => {
             }
           });
           setNotificationCount(count);
-          dispatch(setNotificationCounts(count));
+          dispatchToStore(setNotificationCounts(count));
         }
       } else {
         setNotificationCount(count);
-        dispatch(setNotificationCounts(count));
+        dispatchToStore(setNotificationCounts(count));
       }
     } catch (error) {
       crashlytics().log('GetNotifications Api Home');
@@ -723,7 +721,7 @@ const Home = props => {
           'phone_number'
         ].replace(/ /g, ''),
       };
-      dispatch(setContactDetails(payload));
+      dispatchToStore(setContactDetails(payload));
     } catch (error) {
       crashlytics().log('GetContacts Api Home');
       crashlytics().recordError(error);
@@ -1012,7 +1010,7 @@ const Home = props => {
         console.log('===========>', resetWp);
       }
 
-      dispatch(setDeviceRegistered(true));
+      dispatchToStore(setDeviceRegistered(true));
       getNotifications();
     } catch (error) {
       console.log('===========>error', error);

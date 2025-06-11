@@ -19,14 +19,13 @@ import ConstructionUpdateListSkeleton from '@/components/skeletons/constructionU
 import {ConstructionListApi} from '@/services/apiMethods/construction';
 import {PortfoliListingApi} from '@/services/apiMethods/customerDashboard';
 import {AxiosError} from 'axios';
-import {setUserDetail} from '@/redux/actions/UserActions';
-import {useDispatch} from 'react-redux';
+import {setUserDetail} from '@/redux/slice/UserSlice/userSlice';
+import { dispatchToStore } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
 const ConstructionUpdateList = props => {
-  const dispatch = useDispatch();
   const [constructionUpdateList, setConstructionUpdateList] = useState([]);
   const [length, setLength] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -60,7 +59,7 @@ const ConstructionUpdateList = props => {
       setLoading(false);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&

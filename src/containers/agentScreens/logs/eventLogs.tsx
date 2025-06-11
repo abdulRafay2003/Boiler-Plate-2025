@@ -3,10 +3,8 @@ import {
   Text,
   Dimensions,
   Image,
-  FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Keyboard,
   Platform,
   ActivityIndicator,
@@ -24,14 +22,11 @@ import moment from 'moment';
 import {SubmitButton} from '@/components/buttons/submitButton';
 import DatePicker from 'react-native-date-picker';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {DropDownButton} from '@/components/buttons/dropDownButton';
 import {launchImageLibrary} from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
 import axios, {AxiosError} from 'axios';
-import {ThankYouPopup} from '@/components/modal/thankyouPopUp';
 import {AttachmentPopup} from '@/components/modal/attachmentPopup';
 import AssociateLeadBottomSheet from '@/components/agentBottomSheets/associateLead';
-import {TabRouter} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {DropDownButtonYup} from '@/components/buttons/dropDownYup';
 import {SubmittedPopup} from '@/components/modal/submittedPopup';
@@ -39,12 +34,13 @@ import {Loader} from '@/components/loader';
 import {allLeadsSearchApi} from '@/services/apiMethods/leadsApis';
 import {postNotesApi} from '@/services/apiMethods/createNotes';
 import {ConfirmationPopup} from '@/components/modal/confirmationPopup';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {deleteImageApi} from '@/services/apiMethods/uploadImage';
-import {setUserDetail} from '@/redux/actions/UserActions';
 import {AlertPopup} from '@/components/modal/alertPopup';
 import {BASE_URL_GJ} from '@/services/mainServices/config';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
+import {dispatchToStore, RootState} from '@/redux/store';
+import {setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
@@ -52,9 +48,8 @@ let screenHeight = Math.round(Dimensions.get('window').height);
 const EventLogs = props => {
   const sheetRef = useRef(null);
   const snapPoints = useMemo(() => ['1%', '1%', '70%'], []);
-  const dataFound = useSelector(state => state?.user?.dropdownData);
+  const dataFound = useSelector((state: RootState) => state?.user?.dropdownData);
   const currentDate = new Date();
-  const dispatch = useDispatch();
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [time, setTime] = useState(new Date());
@@ -85,7 +80,7 @@ const EventLogs = props => {
   const [allLeadsSkeleton, setAllLeadsSkeleton] = useState(true);
   const [searchValue, setSearchValue] = useState('');
   const [images, setImages] = useState([]);
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const [deleteIcon, setDeleteIcon] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -204,12 +199,9 @@ const EventLogs = props => {
     setValue('selectedLeadsArray', selectedLeadsArray);
   });
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+       backHandler.remove();
     };
   }, [images]);
   const handleBackButtonClick = () => {
@@ -525,7 +517,7 @@ const EventLogs = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -587,7 +579,7 @@ const EventLogs = props => {
     } catch (err) {
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -644,7 +636,7 @@ const EventLogs = props => {
       }
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       }
     }
@@ -663,7 +655,7 @@ const EventLogs = props => {
         } catch (err) {
           const error = err as AxiosError;
           if (error?.response?.status == 401) {
-            dispatch(setUserDetail({role: 'guest'}));
+            dispatchToStore(setUserDetail({role: 'guest'}));
             props?.navigation?.navigate('Login');
           }
         }

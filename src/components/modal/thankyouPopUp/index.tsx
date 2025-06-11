@@ -4,6 +4,7 @@ import theme from '@/assets/stylesheet/theme';
 import Dialog, {DialogContent} from 'react-native-popup-dialog';
 import {FONT_FAMILY} from '@/constants/fontFamily';
 import {useSelector} from 'react-redux';
+import { RootState } from '@/redux/store';
 // import {LANG_AR} from '@/constants/globalConst';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
@@ -17,7 +18,7 @@ interface Props {
 }
 
 export const ThankYouPopup = (props: Props) => {
-  const userDatails = useSelector(state => state?.user?.userDetail);
+  const userDatails = useSelector((state: RootState) => state?.user?.userDetail);
   const {image, show, onClose, goToHome, thankyouText, onTouchOutside} = props;
   return (
     <Dialog

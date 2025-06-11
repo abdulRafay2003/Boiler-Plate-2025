@@ -23,8 +23,8 @@ import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 import {Loader} from '@/components/loader';
 import {useIsFocused} from '@react-navigation/native';
-import {setNotificationCounts} from '@/redux/actions/UserActions';
-import {useDispatch} from 'react-redux';
+import {setNotificationCounts} from '@/redux/slice/UserSlice/userSlice';
+import { dispatchToStore } from '@/redux/store';
 import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import PushNotification from 'react-native-push-notification';
 import crashlytics from '@react-native-firebase/crashlytics';
@@ -33,7 +33,6 @@ let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const ServiceCharges = props => {
   const focused = useIsFocused();
-  const dispatch = useDispatch();
   const [notificationList, setNotificationList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMark, setLoadingMark] = useState(false);
@@ -130,7 +129,7 @@ const ServiceCharges = props => {
       });
       setNotificationList(array);
       setLoading(false);
-      dispatch(setNotificationCounts(count));
+      dispatchToStore(setNotificationCounts(count));
     } catch (error) {
       crashlytics().log('GetNotifications Api Notifications Screen');
       crashlytics().recordError(error);

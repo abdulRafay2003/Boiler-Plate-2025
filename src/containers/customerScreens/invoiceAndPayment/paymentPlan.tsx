@@ -39,7 +39,7 @@ import {
 } from '@/services/apiMethods/financials';
 import moment from 'moment';
 import {AxiosError} from 'axios';
-import {setLoader, setUserDetail} from '@/redux/actions/UserActions';
+import {setLoader, setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
@@ -59,7 +59,6 @@ export default function PaymentPlan(props) {
   const projectBalance = props?.route?.params?.balance;
   const statementOfAccountUrl = props?.route?.params?.statementOfAccount;
   const [recievedYear, setRecievedYear] = useState(props?.route?.params?.year);
-  const dispatch = useDispatch();
   const [dropdown, setDropdown] = useState(false);
   const focused = useIsFocused();
   const [logs, setLogs] = useState([]);
@@ -166,12 +165,9 @@ export default function PaymentPlan(props) {
     // getPaymentPlans(props?.route?.params?.id, 1, selectedYear);
   }, [selectedYear, statusLable]);
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+      backHandler.remove();
     };
   }, [payNow]);
   const handleBackButtonClick = () => {
@@ -296,7 +292,7 @@ export default function PaymentPlan(props) {
       setSectionListLoading(false);
       setShow(false);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -417,7 +413,7 @@ export default function PaymentPlan(props) {
       setSectionListLoading(false);
       setShow(false);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -460,7 +456,7 @@ export default function PaymentPlan(props) {
       setClickedItem(0);
       const error = err as AxiosError;
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -469,7 +465,7 @@ export default function PaymentPlan(props) {
         setPayNow(false);
         setApiCrash(true);
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       crashlytics().log('Get Url Api Dashboard');
       crashlytics().recordError(error);
     }
@@ -478,7 +474,7 @@ export default function PaymentPlan(props) {
     try {
       if (url != '') {
         setPayNow(false);
-        dispatch(setLoader(false));
+        dispatchToStore(setLoader(false));
         setClickedItem(0);
         props?.navigation?.navigate('PaymentScreen', {
           url: url,
@@ -495,7 +491,7 @@ export default function PaymentPlan(props) {
       const error = err as AxiosError;
       setClickedItem(0);
       if (error?.response?.status == 401) {
-        dispatch(setUserDetail({role: 'guest'}));
+        dispatchToStore(setUserDetail({role: 'guest'}));
         props?.navigation?.navigate('Login');
       } else if (
         error?.response?.status >= 500 &&
@@ -504,7 +500,7 @@ export default function PaymentPlan(props) {
         setPayNow(false);
         setApiCrash(true);
       }
-      dispatch(setLoader(false));
+      dispatchToStore(setLoader(false));
       crashlytics().log('ProceedToPay Api Dashboard');
       crashlytics().recordError(error);
     }

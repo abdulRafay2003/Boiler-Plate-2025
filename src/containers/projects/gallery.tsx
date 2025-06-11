@@ -26,6 +26,7 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import WebVideo from '@conquerplus/react-native-web-video';
 import {ImageProgress} from '@/components/ImageProgress';
 import {useSelector} from 'react-redux';
+import { RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
@@ -33,7 +34,7 @@ export default function Gallery(props) {
   const [selectedImage, setSelectedImage] = useState(
     props?.route?.params?.selected,
   );
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const activeItem = useRef();
   var flatScroll = useRef();
   const albumScroll = useRef();

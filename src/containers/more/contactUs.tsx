@@ -42,6 +42,7 @@ import crashlytics from '@react-native-firebase/crashlytics';
 import {useSelector} from 'react-redux';
 import {DropDownButtonYup} from '@/components/buttons/dropDownYup';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
+import { RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
@@ -233,7 +234,7 @@ const ContactUs = props => {
   const phone_ref = useRef(null);
   const messageRef = useRef(null);
   const focuseds = useIsFocused();
-  const userData = useSelector(state => state?.user?.userDetail);
+  const userData = useSelector((state: RootState) => state?.user?.userDetail);
   const [loading, setLoading] = useState(true);
   const [maxNum, setMaxNum] = useState(9);
   const [showMapPopup, setShowMapPopup] = useState(false);
@@ -284,12 +285,9 @@ const ContactUs = props => {
   }, [isFocused]);
 
   useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
     return () => {
-      // BackHandler.removeEventListener(
-  //      'hardwareBackPress',
- //       handleBackButtonClick,
- //     );
+      backHandler.remove();
     };
   }, [showThankyou, showMapPopup]);
 
