@@ -58,7 +58,6 @@ import {
   finalAmountFinancials,
   formatValue,
   invoiceLink,
-  isDateOlderThanCurrentDate,
   projectDescription,
   sortDate,
 } from '@/utils/business.helper';

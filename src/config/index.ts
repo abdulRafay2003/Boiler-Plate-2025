@@ -1,9 +1,16 @@
 // @flow
-import DebugSettings from './DebugSettings';
+import NavigationService from './navigationService';
+import Metrix from './metrix';
+import Images from './images';
+import Colors from './colors';
+import FONT_FAMILY from './fonts';
+import FontType from './fontsSize';
 
-export default () => {
-  if (__DEV__) {
-    // eslint-disable-next-line no-console
-    console.disableYellowBox = !DebugSettings.yellowBox;
-  }
+export {
+  NavigationService,
+  Metrix,
+  Images,
+  Colors,
+  FONT_FAMILY,
+  FontType,
 };

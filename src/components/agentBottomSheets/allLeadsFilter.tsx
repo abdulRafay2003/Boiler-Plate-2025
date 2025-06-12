@@ -1,21 +1,14 @@
 import {
   View,
-  Text,
-  Platform,
-  Image,
-  FlatList,
-  Dimensions,
-  StyleSheet,
+  Text, FlatList,
+  Dimensions
 } from 'react-native';
-import React, {useState} from 'react';
-import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import React from 'react';
+import BottomSheet from '@gorhom/bottom-sheet';
 import theme from '@/assets/stylesheet/theme';
-import {Calendar, LocaleConfig} from 'react-native-calendars';
-import {SubmitButton} from '../buttons/submitButton';
-import {FONT_FAMILY} from '@/constants/fontFamily';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {SearchBar} from '../searchBar';
-import {DropDownButton} from '../buttons/dropDownButton';
+import { SubmitButton } from '../buttons/submitButton';
+import { FONT_FAMILY } from '@/constants/fontFamily';
+import { DropDownButton } from '../buttons/dropDownButton';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);

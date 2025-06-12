@@ -1,6 +1,6 @@
 export const FONT_FAMILY = {
-  IBMPlexSemiBold: 'IBMPlexSans-SemiBold',
   IBMPlexBold: 'IBMPlexSans-Bold',
-  IBMPlexRegular: 'IBMPlexSans-Regular',
+  IBMPlexSemiBold: 'IBMPlexSans-SemiBold',
   IBMPlexMedium: 'IBMPlexSans-Medium',
+  IBMPlexRegular: 'IBMPlexSans-Regular',
 };

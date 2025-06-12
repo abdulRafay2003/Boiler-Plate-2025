@@ -1,6 +1,37 @@
 import theme from '@/assets/stylesheet/theme';
 import moment from 'moment';
 
+export const timeHumanize = (time: string): string => {
+  let current_time: any = moment().format('x');
+  let to_local = moment(time).format('YYYY-MM-DD HH:mm:ss');
+  let that_time: any = moment(to_local).format('x');
+  let diff = current_time - that_time;
+
+  var final_time = Math.floor(diff / 1000 / 60);
+  if (final_time < 1) {
+    return 'just now';
+  } else if (final_time >= 1 && final_time < 60) {
+    if (final_time < 2) {
+      return `${final_time} min ago`;
+    } else {
+      return `${final_time} min ago`;
+    }
+  } else if (final_time >= 60 && final_time < 1440) {
+    let new_hour = Math.floor(final_time / 60);
+    if (new_hour <= 1) {
+      return `${new_hour} hour ago`;
+    } else {
+      return `${new_hour} hours ago`;
+    }
+  } else {
+    return moment(time).calendar(null, {
+      lastDay: `[yesterday ${moment(time).format('hh:mm A')}]`,
+      lastWeek: `[${moment(time).format('DD, MMM YYYY  hh:mm A')}]`,
+      sameElse: `[${moment(time).format('DD, MMM YYYY  hh:mm A')}]`,
+    });
+  }
+};
+
 export const formatValue = number => {
   if (number != undefined) {
     const fixed = number?.toFixed(2);
@@ -429,4 +460,38 @@ export const finalAmountFinancials = (breakDown, paymentValue) => {
   } else {
     return {text: [], state: true};
   }
+};
+
+export const calculateYears = () => {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+
+  for (let i = -10; i < 10; i++) {
+    years.push(currentYear + i);
+  }
+
+  return years;
+};
+
+export const calculateDateList = (year, month) => {
+  const numDaysInMonth = new Date(year, month, 0).getDate();
+  const dates = [];
+
+  const daysOfWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+
+  for (let day = 1; day <= numDaysInMonth; day++) {
+    const date = new Date(year, month - 1, day);
+    const dayName = daysOfWeek[date.getDay()];
+    dates.push({date, dayName});
+  }
+
+  return dates;
 };

@@ -15,9 +15,10 @@ import {
 } from 'react-native';
 import {FONT_FAMILY} from '@/constants/fontFamily';
 import {useForm} from 'react-hook-form';
+import {SignupValidation} from '@/components/Validations/validations';
 import {yupResolver} from '@hookform/resolvers/yup/src/yup';
 import {SubmitButton} from '@/components/buttons/submitButton';
-import {ModifiedAnimatedInput} from '@/components/TextInput/AuthInput';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Input} from '@/components/TextInput/Input';
 import ReactNativePhoneInput from 'react-native-phone-input';
 import {CountryPicker} from 'react-native-country-codes-picker';
@@ -25,44 +26,37 @@ import {
   countriesList,
   excludedCountries,
 } from '@/constants/fontFamily/globalConst';
-import {setLoader, setUserDetail} from '@/redux/slice/UserSlice/userSlice';
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  LoginEmailValidation,
-  LoginPhoneValidation,
-} from '@/components/Validations/validations';
-import {postLogInSmsApi, postLoginApi} from '@/services/apiMethods/authApis';
+import {postSignUpApi} from '@/services/apiMethods/authApis';
 import {AxiosError} from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
+import {setLoader} from '@/redux/slice/UserSlice/userSlice';
 import LoaderNew from '@/components/loaderNew';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
 import { dispatchToStore, RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 
-export default function Login(props) {
+export default function Signup(props) {
   const isLoadingRedux = useSelector((state: RootState) => state?.user?.loading);
   const phone_ref = useRef(null);
+  const phone_textInput = useRef(null);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [focused, setFocused] = useState('');
   const [phoneCode, setPhoneCode] = useState('+971');
-  const [showCountries, setShowCountries] = useState(false);
-  const [loginType, setLoginType] = useState('email');
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showCountries, setShowCountries] = useState(false);
   const {
     handleSubmit,
     control,
     setValue,
     reset,
-    trigger,
     formState: {errors},
   } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange',
-    resolver: yupResolver(
-      loginType == 'email' ? LoginEmailValidation : LoginPhoneValidation,
-    ),
+    resolver: yupResolver(SignupValidation),
   });
   useEffect(() => {
     dispatchToStore(setLoader(false));
@@ -72,51 +66,20 @@ export default function Login(props) {
       StatusBar.setTranslucent(true);
     }
   }, []);
-
-  const onPressLogin = async () => {
+  const onPressNext = async () => {
     dispatchToStore(setLoader(true));
-    // return;
     try {
       var payLoad = {
         email: email,
-      };
-      const responseLogin = await postLoginApi(payLoad);
-      if (responseLogin?.statusCode == 200) {
-        props?.navigation?.navigate('Otp', {
-          data: email != '' ? email : phone,
-          from: 'email',
-        });
-      }
-      dispatchToStore(setLoader(false));
-    } catch (error) {
-      dispatchToStore(setLoader(false));
-      const err = error as AxiosError;
-      setError(true);
-      console.log('dxfcgvhjkl', err?.response?.data);
-      if (err?.response?.status >= 500 && err?.response?.status <= 599) {
-        console.log('dxfcgvhjkl', err?.response?.data);
-        setErrorMsg('Unable to login at the moment.');
-      } else {
-        setErrorMsg(
-          err?.response == undefined
-            ? err?.toString()
-            : err?.response?.data?.message?.toString(),
-        );
-      }
-    }
-  };
-
-  const onPressLoginSms = async () => {
-    dispatchToStore(setLoader(true));
-    try {
-      var payLoad = {
         phone: phoneCode + phone,
+        deviceToken: 'noToken backend issue',
       };
-      const responseLoginSms = await postLogInSmsApi(payLoad);
-      if (responseLoginSms?.statusCode == 200) {
+      const responseSignup = await postSignUpApi(payLoad);
+      if (responseSignup?.data?.statusCode == 200) {
         props?.navigation?.navigate('Otp', {
-          data: phone != '' ? phoneCode + phone : email,
-          from: 'phoneSms',
+          data: email,
+          from: 'signup',
+          phoneNo: phoneCode + phone,
         });
       }
       dispatchToStore(setLoader(false));
@@ -125,7 +88,7 @@ export default function Login(props) {
       const err = error as AxiosError;
       setError(true);
       if (err?.response?.status >= 500 && err?.response?.status <= 599) {
-        setErrorMsg('Unable to login at the moment.');
+        setErrorMsg('Unable to register user at the moment.');
       } else {
         setErrorMsg(
           err?.response == undefined
@@ -133,7 +96,6 @@ export default function Login(props) {
             : err?.response?.data?.message?.toString(),
         );
       }
-      // Alert.alert(err?.response?.data?.message?.toString());
     }
   };
   return (
@@ -153,11 +115,14 @@ export default function Login(props) {
         }}
         resizeMode="cover">
         {/* <StatusBar barStyle={'light-content'} translucent={true}  /> */}
-        <View
+        <KeyboardAwareScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            alignItems: 'center',
+          }}
           style={{
             top: 66,
             flex: 1,
-            alignItems: 'center',
           }}>
           <TouchableOpacity
             style={{
@@ -191,7 +156,6 @@ export default function Login(props) {
               tintColor: theme?.logoColor,
             }}
           />
-
           <View style={{width: '100%', marginTop: screenHeight * 0.1}}>
             <Text
               allowFontScaling={false}
@@ -203,7 +167,7 @@ export default function Login(props) {
                 flexWrap: 'wrap',
                 width: '85%',
               }}>
-              Sign In Your Account
+              Register Your Account
             </Text>
             <Text
               allowFontScaling={false}
@@ -214,24 +178,26 @@ export default function Login(props) {
                 textAlign: 'left',
                 flexWrap: 'wrap',
               }}>
-              Please login below to manage your account
+              Please provide your registered email address and mobile number to
+              proceed
             </Text>
-            <View
-              style={{
-                height: screenHeight * 0.48,
-                justifyContent: 'space-between',
-              }}>
+            <KeyboardAwareScrollView
+              enableOnAndroid={true}
+              style={{width: '100%'}}
+              contentContainerStyle={{
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              showsVerticalScrollIndicator={false}
+              bounces={false}>
               <View
                 style={{
-                  alignItems: 'center',
+                  height: screenHeight * 0.48,
                   justifyContent: 'space-between',
-                  height: 200,
+                  width: '100%',
                 }}>
-                {loginType == 'email' ? (
+                <View>
                   <Input
-                    returnKeyLabel={'Done'}
-                    returnKeyType={'done'}
-                    onSubmitEditing={Keyboard.dismiss}
                     title={'Email'}
                     titleStyles={{
                       marginBottom: 18.5,
@@ -272,11 +238,10 @@ export default function Login(props) {
                     onChangeTexts={text => {
                       if (text == ' ') {
                       } else {
-                        setEmail(text);
+                        setEmail(text.replace(/\s/g, ''));
                       }
                     }}
                   />
-                ) : (
                   <View>
                     <Text
                       allowFontScaling={false}
@@ -342,6 +307,7 @@ export default function Login(props) {
                         }}
                       />
                       <Input
+                        ref={phone_textInput}
                         returnKeyLabel={'Done'}
                         returnKeyType={'done'}
                         onSubmitEditing={Keyboard.dismiss}
@@ -377,7 +343,7 @@ export default function Login(props) {
                         onChangeTexts={text => {
                           if (text == '.') {
                           } else {
-                            setPhone(text.replace(/\s/g, ''));
+                            setPhone(text);
                           }
                         }}
                         keyboardType={'numeric'}
@@ -385,66 +351,28 @@ export default function Login(props) {
                       />
                     </View>
                   </View>
-                )}
-                <Text
-                  allowFontScaling={false}
-                  style={{
-                    fontSize: 20,
+                </View>
+
+                <SubmitButton
+                  btnContainer={{
+                    height: 48,
+                    width: '100%',
+                    backgroundColor: theme?.logoColor,
+                    borderRadius: 8,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    alignSelf: 'center',
+                  }}
+                  btnText="Next"
+                  btnTextStyle={{
+                    color: theme?.white,
+                    fontSize: 14,
                     fontFamily: FONT_FAMILY?.IBMPlexSemiBold,
-                    color: theme?.textGrey,
-                  }}>
-                  OR
-                </Text>
-                <TouchableOpacity
-                  activeOpacity={1}
-                  onPress={() => {
-                    if (loginType == 'email') {
-                      setPhone('');
-                      reset({email, phone});
-                      setLoginType('phone');
-                    } else {
-                      setEmail('');
-                      reset({email, phone});
-                      setLoginType('email');
-                    }
-                  }}>
-                  <Text
-                    allowFontScaling={false}
-                    style={{
-                      fontSize: 14,
-                      fontFamily: FONT_FAMILY?.IBMPlexRegular,
-                      color: theme?.logoColor,
-                      textDecorationLine: 'underline',
-                    }}>
-                    {loginType == 'email'
-                      ? 'Login with phone number'
-                      : 'Login with email'}
-                  </Text>
-                </TouchableOpacity>
+                  }}
+                  onPress={handleSubmit(onPressNext)}
+                />
               </View>
-              <SubmitButton
-                btnContainer={{
-                  height: 48,
-                  width: '95%',
-                  backgroundColor: theme?.logoColor,
-                  borderRadius: 8,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  alignSelf: 'center',
-                }}
-                btnText="Login"
-                btnTextStyle={{
-                  color: theme?.white,
-                  fontSize: 14,
-                  fontFamily: FONT_FAMILY?.IBMPlexSemiBold,
-                }}
-                onPress={
-                  loginType == 'email'
-                    ? handleSubmit(onPressLogin)
-                    : handleSubmit(onPressLoginSms)
-                }
-              />
-            </View>
+            </KeyboardAwareScrollView>
           </View>
           <View style={{marginTop: 20, flexDirection: 'row'}}>
             <Text
@@ -454,13 +382,13 @@ export default function Login(props) {
                 fontFamily: FONT_FAMILY?.IBMPlexRegular,
                 color: theme?.black,
               }}>
-              Don't have any account?
+              Already have an account?
             </Text>
             <TouchableOpacity
               style={{marginLeft: 5}}
               activeOpacity={1}
               onPress={() => {
-                props?.navigation?.navigate('Signup');
+                props?.navigation?.navigate('Login');
               }}>
               <Text
                 allowFontScaling={false}
@@ -469,11 +397,11 @@ export default function Login(props) {
                   fontFamily: FONT_FAMILY?.IBMPlexMedium,
                   color: theme?.logoColor,
                 }}>
-                Sign Up
+                Sign In
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAwareScrollView>
         <CountryPicker
           show={showCountries}
           lang={'en'}
@@ -483,9 +411,11 @@ export default function Login(props) {
               paddingBottom: 50,
             },
             dialCode: {
+              // backgroundColor:'red',
               color: theme?.black,
             },
             countryName: {
+              // backgroundColor:'red',
               color: theme?.black,
             },
             flag: {

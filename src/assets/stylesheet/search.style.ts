@@ -1,15 +1,10 @@
 import {FONT_FAMILY} from '@/constants/fontFamily';
-import i18next from 'i18next';
-import {Dimensions, StatusBar} from 'react-native';
 import theme from './theme';
-let {width, height} = Dimensions.get('window');
 
 export default {
   container: {
     width: '90%',
     flexDirection: 'row',
-    // backgroundColor: 'green',
-    // justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#E7EFF8',
     alignSelf: 'center',
@@ -28,17 +23,13 @@ export default {
   leftImage: {
     height: 18,
     width: 18,
-    // tintColor: 'red',
-    // backgroundColor: 'red',
   },
   txtInputStyle: {
     width: '80%',
     justifyContent: 'center',
     fontSize: 12,
-    // textAlign: i18next.language == LANG_AR ? 'right' : 'left',
     fontFamily: FONT_FAMILY.IBMPlexBold,
     color: theme.navyBlue,
-    // backgroundColor: 'red',
   },
 
   rightImgCont: {
@@ -54,6 +45,5 @@ export default {
     width: 18,
     alignSelf: 'center',
     right: 40,
-    // backgroundColor: 'red',
   },
 };

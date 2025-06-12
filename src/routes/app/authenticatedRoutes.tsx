@@ -20,35 +20,35 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '@/assets/stylesheet/theme';
 import {FONT_FAMILY} from '@/constants/fontFamily';
-import Home from '@/containers/Main/home';
+import Home from '@/screens/Main/home';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-import ProjectDetails from '@/containers/projects/projectDetails';
+import ProjectDetails from '@/screens/projects/projectDetails';
 import {CircleBackButton} from '@/components/buttons/circleBackButton';
-import FloorPlans from '@/containers/projects/floorPlans';
-import Gallery from '@/containers/projects/gallery';
-import VRTour from '@/containers/Main/vrTour';
-import Notification from '@/containers/Main/notification';
+import FloorPlans from '@/screens/projects/floorPlans';
+import Gallery from '@/screens/projects/gallery';
+import VRTour from '@/screens/Main/vrTour';
+import Notification from '@/screens/Main/notification';
 
-import More from '@/containers/more/more';
-import ContactUs from '@/containers/more/contactUs';
-import BlogListing from '@/containers/more/blogListing';
-import BlogDetail from '@/containers/more/blogDetails';
-import About from '@/containers/more/about';
+import More from '@/screens/more/more';
+import ContactUs from '@/screens/more/contactUs';
+import BlogListing from '@/screens/more/blogListing';
+import BlogDetail from '@/screens/more/blogDetails';
+import About from '@/screens/more/about';
 import WebView from 'react-native-webview';
-import WebViews from '@/containers/Main/webView';
-import EnquiryForm from '@/containers/sideScreens/enquiryForm';
-import Location from '@/containers/sideScreens/location';
-import MoreModal from '@/containers/more/moreModal';
+import WebViews from '@/screens/Main/webView';
+import EnquiryForm from '@/screens/sideScreens/enquiryForm';
+import Location from '@/screens/sideScreens/location';
+import MoreModal from '@/screens/more/moreModal';
 import {
   setRefresh,
 } from '@/redux/slice/UserSlice/userSlice';
 import { dispatchToStore } from '@/redux/store';
-import ApplyMortage from '@/containers/sideScreens/applyMortage';
-import PrivacyScreen from '@/containers/sideScreens/privacyPolicy';
-import VideoScreen from '@/containers/sideScreens/videoScreen';
+import ApplyMortage from '@/screens/sideScreens/applyMortage';
+import PrivacyScreen from '@/screens/sideScreens/privacyPolicy';
+import VideoScreen from '@/screens/sideScreens/videoScreen';
 import {GetWalkThrough} from '@/services/apiMethods/walkthrough';
-import Login from '@/containers/auth/login';
+import Login from '@/screens/auth/login';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);

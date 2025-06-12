@@ -470,36 +470,4 @@ export const monnthsList = [
   'Nov',
   'Dec',
 ];
-export const calculateYears = () => {
-  const currentYear = new Date().getFullYear();
-  const years = [];
 
-  for (let i = -10; i < 10; i++) {
-    years.push(currentYear + i);
-  }
-
-  return years;
-};
-
-export const calculateDateList = (year, month) => {
-  const numDaysInMonth = new Date(year, month, 0).getDate();
-  const dates = [];
-
-  const daysOfWeek = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ];
-
-  for (let day = 1; day <= numDaysInMonth; day++) {
-    const date = new Date(year, month - 1, day);
-    const dayName = daysOfWeek[date.getDay()];
-    dates.push({date, dayName});
-  }
-
-  return dates;
-};

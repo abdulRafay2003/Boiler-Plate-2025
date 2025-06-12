@@ -3,14 +3,9 @@ import {
   View,
   Dimensions,
   LogBox,
-  I18nManager,
-  AppState,
-  ActivityIndicator,
   TouchableOpacity,
-  Text,
+  StyleSheet,
 } from 'react-native';
-import applyConfigSettings from './config/index';
-import DataHandler from './services/mainServices/dataHandler.service';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import {persistor, store} from './redux/store';
@@ -18,24 +13,20 @@ import InternetConnectionAlert from 'react-native-internet-connection-alert';
 import Video from 'react-native-video';
 import MainNavigator from './routes/app/MainNavigator';
 import crashlytics from '@react-native-firebase/crashlytics';
-import theme from './assets/stylesheet/theme';
 import {FONT_FAMILY} from './constants/fontFamily';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomText from './components/CustomText';
+import {Colors} from './config';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 
-applyConfigSettings();
-
-LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
-
-LogBox.ignoreAllLogs(); //Ignore all log notifications
+LogBox.ignoreLogs(['Warning: ...']);
+LogBox.ignoreAllLogs(true); //Ignore all log notifications
 
 const Main = props => {
   const refVideo = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [appState, setAppState] = useState(AppState.currentState);
-  const [isMounted, setIsMounted] = useState(true);
   const [gap, setGap] = useState(true);
+
   useEffect(() => {
     setIsLoading(true);
     setTimeout(() => {
@@ -47,47 +38,34 @@ const Main = props => {
   }, []);
 
   useEffect(() => {
-    // Enable on runtime
-    crashlytics().setCrashlyticsCollectionEnabled(false);
+    crashlytics().setCrashlyticsCollectionEnabled(false); 
   }, []);
+
   if (isLoading) {
     return (
-      <View style={{width: screenWidth, height: '100%'}}>
-       {gap == false && <TouchableOpacity
-          style={{
-            position: 'absolute',
-            zIndex: 1,
-            right: 20,
-            top: 40,
-            // backgroundColor: theme?.logoColor,
-            padding: 5,
-            borderRadius: 5,
-          }}
-          activeOpacity={1}
-          onPress={() => {
-            setIsLoading(false)
-          }}>
-          <Text
-          allowFontScaling={false}
-            style={{
-              color: theme?.white,
-              fontSize: 14,
-              fontFamily: FONT_FAMILY?.IBMPlexBold,
-            }}>
-            Skip Intro
-          </Text>
-        </TouchableOpacity>}
+      <View style={styles.fullScreenStyle}>
+        {gap == false && (
+          <TouchableOpacity
+            style={styles.skipIntroCOntainer}
+            activeOpacity={1}
+            onPress={() => setIsLoading(false)}>
+            <CustomText.RegularText
+              customStyle={{
+                color: Colors.white,
+                fontFamily: FONT_FAMILY?.IBMPlexBold,
+              }}>
+              Skip Intro
+            </CustomText.RegularText>
+          </TouchableOpacity>
+        )}
         <Video
           ref={refVideo}
-          source={require('./assets/splashVideo/splash.mp4')} // Can be a URL or a local file.
+          source={require('./assets/splashVideo/splash.mp4')}
           resizeMode={'cover'}
           onBuffer={() => {}}
           playInBackground={true}
-          onError={() => {}} // Callback when video cannot be loaded
-          style={{
-            width: screenWidth,
-            height: '100%',
-          }}
+          onError={() => {}}
+          style={styles.fullScreenStyle}
         />
       </View>
     );
@@ -98,7 +76,7 @@ const Main = props => {
           <View style={{flex: 1}}>
             <InternetConnectionAlert
               onChange={connectionState => {
-                console.log('Internet connection state',connectionState);
+                console.log('Internet connection state', connectionState);
               }}>
               <MainNavigator />
             </InternetConnectionAlert>
@@ -110,3 +88,15 @@ const Main = props => {
 };
 
 export default Main;
+
+const styles = StyleSheet.create({
+  fullScreenStyle: {width: screenWidth, height: '100%'},
+  skipIntroCOntainer: {
+    position: 'absolute',
+    zIndex: 1,
+    right: 20,
+    top: 40,
+    padding: 5,
+    borderRadius: 5,
+  },
+});
