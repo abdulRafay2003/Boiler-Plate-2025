@@ -1,15 +1,10 @@
-import { View, Text, Platform, Image } from 'react-native'
-import React, { useState } from 'react'
+import { Platform } from 'react-native';
+import React, { useState } from 'react';
 import BottomSheet, {
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import theme from '@/assets/stylesheet/theme';
-import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { SubmitButton } from '../buttons/submitButton';
-import { FONT_FAMILY } from '@/constants/fontFamily';
-import { Input } from '../TextInput/Input';
-import moment from 'moment';
-import DatePicker from 'react-native-date-picker';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup/src/yup';
 import { NoteLogsValidation } from '../Validations/validations';

@@ -35,7 +35,7 @@ import {postLogInSmsApi, postLoginApi} from '@/services/apiMethods/authApis';
 import {AxiosError} from 'axios';
 import LoaderNew from '@/components/loaderNew';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
-import { RootState } from '@/redux/store';
+import { dispatchToStore, RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 

@@ -45,7 +45,7 @@ import * as Progress from 'react-native-progress';
 import {ImageViewerPopup} from '@/components/modal/imageViewer';
 import {ImageViewerEditProfile} from '@/components/modal/imageViewerEditProfile';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
-import { RootState } from '@/redux/store';
+import { dispatchToStore, RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const UserProfile = props => {

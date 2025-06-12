@@ -1,19 +1,13 @@
 import {
   View,
-  Text,
-  Image,
-  Dimensions,
+  Text, Dimensions,
   TouchableOpacity,
-  FlatList,
-  ScrollView,
+  FlatList
 } from 'react-native';
 import React from 'react';
 import theme from '@/assets/stylesheet/theme';
-import Dialog, {DialogContent} from 'react-native-popup-dialog';
-import {FONT_FAMILY} from '@/constants/fontFamily';
-import {SubmitButton} from '@/components/buttons/submitButton';
-import DatePicker from 'react-native-date-picker';
-import moment from 'moment';
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
+import { FONT_FAMILY } from '@/constants/fontFamily';
 import LinearGradient from 'react-native-linear-gradient';
 
 let screenWidth = Math.round(Dimensions.get('window').width);

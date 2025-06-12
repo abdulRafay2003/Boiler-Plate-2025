@@ -51,7 +51,7 @@ import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
 import {DownPaymentPopup} from '@/components/modal/downpaymentPopup';
 import SingleItemSkeleton from '@/components/skeletons/singleItemSkeleton';
 import {ReciptListingPopup} from '@/components/modal/recieptPopup';
-import { RootState } from '@/redux/store';
+import { dispatchToStore, RootState } from '@/redux/store';
 
 let screenHeight = Math.round(Dimensions.get('window').height);
 let screenWidth = Math.round(Dimensions.get('window').width);

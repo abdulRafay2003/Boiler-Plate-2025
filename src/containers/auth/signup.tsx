@@ -33,7 +33,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setLoader} from '@/redux/slice/UserSlice/userSlice';
 import LoaderNew from '@/components/loaderNew';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
-import { RootState } from '@/redux/store';
+import { dispatchToStore, RootState } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 

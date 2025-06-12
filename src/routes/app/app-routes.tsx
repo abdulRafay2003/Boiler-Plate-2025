@@ -84,7 +84,7 @@ import messaging from '@react-native-firebase/messaging';
 import RecieptViewer from '@/containers/customerScreens/invoiceAndPayment/reciept';
 import StatementViewer from '@/containers/customerScreens/invoiceAndPayment/statement';
 import NotificationItem from '@/containers/customerScreens/invoiceAndPayment/notificationItem';
-import { RootState, store } from '@/redux/store';
+import { dispatchToStore, RootState, store } from '@/redux/store';
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);
 const Stack = createStackNavigator();

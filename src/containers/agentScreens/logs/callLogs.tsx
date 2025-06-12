@@ -2,54 +2,46 @@ import {
   View,
   Text,
   Dimensions,
-  Image,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Keyboard,
+  Image, TouchableOpacity,
+  StyleSheet, Keyboard,
   Platform,
   ActivityIndicator,
-  BackHandler,
+  BackHandler
 } from 'react-native';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {Headers} from '@/components/header/headers';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Headers } from '@/components/header/headers';
 import theme from '@/assets/stylesheet/theme';
-import {FONT_FAMILY} from '@/constants/fontFamily';
-import {Input} from '@/components/TextInput/Input';
-import {useForm} from 'react-hook-form';
-import {CallLogsValidation} from '@/components/Validations/validations';
-import {yupResolver} from '@hookform/resolvers/yup/src/yup';
+import { FONT_FAMILY } from '@/constants/fontFamily';
+import { Input } from '@/components/TextInput/Input';
+import { useForm } from 'react-hook-form';
+import { CallLogsValidation } from '@/components/Validations/validations';
+import { yupResolver } from '@hookform/resolvers/yup/src/yup';
 import moment from 'moment';
-import {SubmitButton} from '@/components/buttons/submitButton';
+import { SubmitButton } from '@/components/buttons/submitButton';
 import DatePicker from 'react-native-date-picker';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {DropDownButton} from '@/components/buttons/dropDownButton';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { launchImageLibrary } from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
-import axios, {AxiosError} from 'axios';
-import {ThankYouPopup} from '@/components/modal/thankyouPopUp';
-import {AttachmentPopup} from '@/components/modal/attachmentPopup';
+import axios, { AxiosError } from 'axios';
+import { AttachmentPopup } from '@/components/modal/attachmentPopup';
 import AssociateLeadBottomSheet from '@/components/agentBottomSheets/associateLead';
-import {TabRouter} from '@react-navigation/native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {CountryPicker} from 'react-native-country-codes-picker';
-import {excludedCountries} from '@/constants/fontFamily/globalConst';
+import { ScrollView } from 'react-native-gesture-handler';
+import { CountryPicker } from 'react-native-country-codes-picker';
+import { excludedCountries } from '@/constants/fontFamily/globalConst';
 import ReactNativePhoneInput from 'react-native-phone-input';
-import {DropDownButtonYup} from '@/components/buttons/dropDownYup';
-import {SubmittedPopup} from '@/components/modal/submittedPopup';
-import {allLeadsSearchApi} from '@/services/apiMethods/leadsApis';
-import {postNotesApi} from '@/services/apiMethods/createNotes';
-import {Loader} from '@/components/loader';
+import { DropDownButtonYup } from '@/components/buttons/dropDownYup';
+import { SubmittedPopup } from '@/components/modal/submittedPopup';
+import { allLeadsSearchApi } from '@/services/apiMethods/leadsApis';
+import { postNotesApi } from '@/services/apiMethods/createNotes';
+import { Loader } from '@/components/loader';
 import {
-  deleteImageApi,
-  uploadImageApi,
+  deleteImageApi
 } from '@/services/apiMethods/uploadImage';
-import {useDispatch, useSelector} from 'react-redux';
-import {ConfirmationPopup} from '@/components/modal/confirmationPopup';
-import {AlertPopup} from '@/components/modal/alertPopup';
-import {BASE_URL_GJ} from '@/services/mainServices/config';
-import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
+import { useSelector } from 'react-redux';
+import { ConfirmationPopup } from '@/components/modal/confirmationPopup';
+import { AlertPopup } from '@/components/modal/alertPopup';
+import { BASE_URL_GJ } from '@/services/mainServices/config';
+import { AlertPopupAuth } from '@/components/modal/alertPopupAuth';
 import { dispatchToStore, RootState } from '@/redux/store';
 import { setUserDetail } from '@/redux/slice/UserSlice/userSlice';
 

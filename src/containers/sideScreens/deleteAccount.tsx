@@ -16,7 +16,7 @@ import LoaderNew from '@/components/loaderNew';
 import {ThankYouPopup} from '@/components/modal/thankyouPopUp';
 import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
 import {AxiosError} from 'axios';
-import { RootState } from '@/redux/store';
+import { dispatchToStore, RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);

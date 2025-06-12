@@ -52,7 +52,7 @@ import {AlertPopupAuth} from '@/components/modal/alertPopupAuth';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 import FinancialsListingItem from '@/components/financialListinItem';
-import { RootState } from '@/redux/store';
+import { dispatchToStore, RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);

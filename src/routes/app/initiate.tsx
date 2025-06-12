@@ -81,7 +81,7 @@ import ImageWork from '@/containers/agentScreens/main/imageWork';
 import RecieptViewer from '@/containers/customerScreens/invoiceAndPayment/reciept';
 import StatementViewer from '@/containers/customerScreens/invoiceAndPayment/statement';
 import NotificationItem from '@/containers/customerScreens/invoiceAndPayment/notificationItem';
-import { store } from '@/redux/store';
+import { dispatchToStore, store } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);

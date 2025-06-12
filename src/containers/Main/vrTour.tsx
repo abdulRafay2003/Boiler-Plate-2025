@@ -26,7 +26,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setRefresh} from '@/redux/slice/UserSlice/userSlice';
 import crashlytics from '@react-native-firebase/crashlytics';
 import SingleVRSkeleton from '@/components/skeletons/singleVrSke';
-import { RootState } from '@/redux/store';
+import { dispatchToStore, RootState } from '@/redux/store';
 
 let screenWidth = Math.round(Dimensions.get('window').width);
 let screenHeight = Math.round(Dimensions.get('window').height);

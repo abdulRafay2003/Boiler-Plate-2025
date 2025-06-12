@@ -1,13 +1,13 @@
-import {View, Text, Platform, Image, Dimensions} from 'react-native';
-import React, {useState} from 'react';
-import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import { View, Text, Platform, Image, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import theme from '@/assets/stylesheet/theme';
-import {SubmitButton} from '../buttons/submitButton';
-import {FONT_FAMILY} from '@/constants/fontFamily';
-import {Input} from '../TextInput/Input';
-import {useForm} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup/src/yup';
-import {NoteLogsValidation} from '../Validations/validations';
+import { SubmitButton } from '../buttons/submitButton';
+import { FONT_FAMILY } from '@/constants/fontFamily';
+import { Input } from '../TextInput/Input';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup/src/yup';
+import { NoteLogsValidation } from '../Validations/validations';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 

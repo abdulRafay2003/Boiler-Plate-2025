@@ -24,7 +24,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setUserDetail} from '@/redux/slice/UserSlice/userSlice';
 import {AxiosError} from 'axios';
 import {DownloadButton} from '@/components/buttons/downloadButton';
-import { RootState } from '@/redux/store';
+import { dispatchToStore, RootState } from '@/redux/store';
 let screenHeight = Math.round(Dimensions.get('window').height);
 let screenWidth = Math.round(Dimensions.get('window').width);
 

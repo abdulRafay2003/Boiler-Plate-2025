@@ -49,6 +49,7 @@ import {DownPaymentPopup} from '@/components/modal/downpaymentPopup';
 import {DropDownButton} from '@/components/buttons/dropDownButton';
 import {ReciptListingPopup} from '@/components/modal/recieptPopup';
 import PaymentPlanItem from '@/components/paymentPlanItem';
+import { dispatchToStore } from '@/redux/store';
 
 let screenHeight = Math.round(Dimensions.get('window').height);
 let screenWidth = Math.round(Dimensions.get('window').width);
